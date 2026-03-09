@@ -10,7 +10,7 @@ import { Injectable } from "@nestjs/common";
 export class PrismaAuthRepository implements AuthRepositoryInterface { 
     constructor(
         private prismaClient: PrismaService
-    ) { }
+    ) {}
 
     async save(compte: Account): Promise<Account> {
         const account = await this.prismaClient.account.create({

@@ -15,5 +15,6 @@ export class Role {
         return new Role(role);
     }
 
-    
+    getValue(): Roles { return this.role }
+
 }
