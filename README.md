@@ -69,3 +69,14 @@ Voir `.env` pour les configurations:
 
 - `DATABASE_URL` - Chaîne de connexion PostgreSQL
 - Autres variables spécifiques à l'application
+
+## Norme de nomanclature
+
+Alors les rêgles sont absulut et de peuvent pas être modifié : 
+
+__variable__ : snake_case
+__fonction__ : camelCase
+__class__ : UpperCase
+__Interface__: UpperCase
+
+TOUT est en français, baguette, *camanbert*

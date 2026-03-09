@@ -16,16 +16,9 @@ export class Password {
         return new Password(password);
     }
 
-    static hashPassword(password: string): string {
-        const hash = bcript.hash(password, 10);
-        return hash;
-    }
-
-    static comparePassword(password: string, hash: string): Promise<boolean> {
-        return bcript.compare(password, hash);
-    }
-
     static validatePassword(password: string): boolean {
         return password.length >= 8;
     }
+
+    getValue(): string { return this.password }
 }

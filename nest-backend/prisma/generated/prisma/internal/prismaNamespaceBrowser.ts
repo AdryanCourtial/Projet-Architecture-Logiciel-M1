@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  Account: 'Account',
+  Phone: 'Phone'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +69,64 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AccountScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password',
+  createdAt: 'createdAt',
+  firstname: 'firstname',
+  name: 'name',
+  role: 'role',
+  jwt: 'jwt'
+} as const
+
+export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+export const PhoneScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  number: 'number',
+  accountId: 'accountId'
+} as const
+
+export type PhoneScalarFieldEnum = (typeof PhoneScalarFieldEnum)[keyof typeof PhoneScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const AccountOrderByRelevanceFieldEnum = {
+  email: 'email',
+  password: 'password',
+  firstname: 'firstname',
+  name: 'name',
+  role: 'role',
+  jwt: 'jwt'
+} as const
+
+export type AccountOrderByRelevanceFieldEnum = (typeof AccountOrderByRelevanceFieldEnum)[keyof typeof AccountOrderByRelevanceFieldEnum]
+
+
+export const PhoneOrderByRelevanceFieldEnum = {
+  code: 'code',
+  number: 'number'
+} as const
+
+export type PhoneOrderByRelevanceFieldEnum = (typeof PhoneOrderByRelevanceFieldEnum)[keyof typeof PhoneOrderByRelevanceFieldEnum]
 

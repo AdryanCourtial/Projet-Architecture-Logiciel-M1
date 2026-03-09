@@ -26,4 +26,6 @@ export class Email {
         return email.trim().toLowerCase();
     }
 
+    getValue(): string { return this.email }
+
 }
