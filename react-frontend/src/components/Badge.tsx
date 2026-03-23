@@ -5,8 +5,8 @@ type BadgeProps = {
 function Badge({ label }: BadgeProps) {
   const classes =
     label === "NEW"
-      ? "bg-skate-acid text-skate-bg"
-      : "bg-skate-cta text-skate-text";
+      ? "bg-acid text-bgPrimary"
+      : "bg-cta text-textPrimary";
 
   return (
     <span

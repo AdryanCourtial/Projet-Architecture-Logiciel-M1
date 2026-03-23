@@ -1,10 +1,279 @@
+import { useState } from "react";
+import Button from "../components/Button";
+
+type AccountData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  phone: string;
+};
+
+type MockUser = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+type InvoiceLine = {
+  productId: number;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+};
+
+type Invoice = {
+  id: string;
+  createdAt: string;
+  total: number;
+  lines: InvoiceLine[];
+};
+
+const INVOICES_STORAGE_KEY = "mockInvoices";
+const MOCK_USER_KEY = "mockUser";
+const MOCK_ACCOUNT_KEY = "mockAccountProfile";
+
+const fallbackAccount: AccountData = {
+  firstName: "Guest",
+  lastName: "User",
+  email: "guest@example.com",
+  address: "",
+  phone: "",
+};
+
+const getInitialAccount = (): AccountData => {
+  try {
+    const rawAccount = localStorage.getItem(MOCK_ACCOUNT_KEY);
+    if (rawAccount) {
+      return JSON.parse(rawAccount) as AccountData;
+    }
+
+    const rawUser = localStorage.getItem(MOCK_USER_KEY);
+    if (rawUser) {
+      const user = JSON.parse(rawUser) as MockUser;
+      return {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        address: "",
+        phone: "",
+      };
+    }
+  } catch {
+    return fallbackAccount;
+  }
+
+  return fallbackAccount;
+};
+
 function Account() {
+  const [account, setAccount] = useState<AccountData>(() =>
+    getInitialAccount(),
+  );
+  const [draft, setDraft] = useState<AccountData>(() => getInitialAccount());
+  const [isEditing, setIsEditing] = useState(false);
+  const [invoices] = useState<Invoice[]>(() => {
+    try {
+      const rawInvoices = localStorage.getItem(INVOICES_STORAGE_KEY);
+      return rawInvoices ? (JSON.parse(rawInvoices) as Invoice[]) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const startEdit = () => {
+    setDraft(account);
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setDraft(account);
+    setIsEditing(false);
+  };
+
+  const saveEdit = () => {
+    setAccount(draft);
+    localStorage.setItem(MOCK_ACCOUNT_KEY, JSON.stringify(draft));
+    setIsEditing(false);
+  };
+
+  const updateField = (field: keyof AccountData, value: string) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+  };
+
+  const displayedAccount = isEditing ? draft : account;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-title uppercase tracking-[0.2em]">
-        Your Account
-      </h1>
-    </div>
+    <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-3xl font-black uppercase tracking-[0.08em] sm:text-4xl">
+          Account
+        </h1>
+
+        <div className="flex items-center gap-2">
+          {isEditing ? (
+            <>
+              <Button type="button" variant="secondary" onClick={cancelEdit}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={saveEdit}>
+                Save
+              </Button>
+            </>
+          ) : (
+            <Button type="button" onClick={startEdit}>
+              Edit
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-8 overflow-hidden border border-white/10 bg-black/30">
+        <div className="grid grid-cols-1 divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0">
+          <div className="space-y-1 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
+              First Name
+            </p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={displayedAccount.firstName}
+                onChange={(event) =>
+                  updateField("firstName", event.target.value)
+                }
+                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+              />
+            ) : (
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+                {displayedAccount.firstName}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
+              Last Name
+            </p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={displayedAccount.lastName}
+                onChange={(event) =>
+                  updateField("lastName", event.target.value)
+                }
+                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+              />
+            ) : (
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+                {displayedAccount.lastName}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 divide-y divide-white/10">
+          <div className="space-y-1 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
+              Email
+            </p>
+            {isEditing ? (
+              <input
+                type="email"
+                value={displayedAccount.email}
+                onChange={(event) => updateField("email", event.target.value)}
+                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+              />
+            ) : (
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+                {displayedAccount.email}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
+              Address
+            </p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={displayedAccount.address}
+                onChange={(event) => updateField("address", event.target.value)}
+                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+              />
+            ) : (
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+                {displayedAccount.address}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
+              Phone Number
+            </p>
+            {isEditing ? (
+              <input
+                type="tel"
+                value={displayedAccount.phone}
+                onChange={(event) => updateField("phone", event.target.value)}
+                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+              />
+            ) : (
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+                {displayedAccount.phone}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 border border-white/10 bg-black/30 p-5">
+        <h2 className="text-xl font-black uppercase tracking-[0.08em]">
+          Invoices
+        </h2>
+
+        {invoices.length === 0 ? (
+          <p className="mt-4 text-sm text-white/70">No invoice yet.</p>
+        ) : (
+          <div className="mt-4 space-y-4">
+            {invoices.map((invoice) => (
+              <article key={invoice.id} className="border border-white/10 p-4">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/70">
+                    {invoice.id}
+                  </p>
+                  <p className="text-xs text-white/70">
+                    {new Date(invoice.createdAt).toLocaleString("fr-FR")}
+                  </p>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  {invoice.lines.map((line) => (
+                    <div
+                      key={`${invoice.id}-${line.productId}`}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <p className="text-textPrimary">
+                        {line.name} x{line.quantity}
+                      </p>
+                      <p className="font-bold text-textPrimary">
+                        {line.lineTotal.toFixed(2)} €
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="mt-4 border-t border-white/10 pt-3 text-sm font-black uppercase text-textPrimary">
+                  Total: {invoice.total.toFixed(2)} €
+                </p>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 

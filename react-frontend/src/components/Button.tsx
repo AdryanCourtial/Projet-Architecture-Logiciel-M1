@@ -14,9 +14,9 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-skate-cta text-skate-text hover:bg-skate-acid hover:text-skate-bg",
+    "bg-cta text-textPrimary hover:bg-acid hover:text-bgPrimary",
   secondary:
-    "border border-skate-text bg-transparent text-skate-text hover:border-skate-acid hover:text-skate-acid",
+    "border border-textPrimary bg-transparent text-textPrimary hover:border-acid hover:text-acid",
 };
 
 function Button({

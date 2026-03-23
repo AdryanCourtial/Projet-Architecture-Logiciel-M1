@@ -26,7 +26,7 @@ function ProductCard({ product }: ProductCardProps) {
             </p>
             <Link
               to={`/product/${product.id}`}
-              className="text-sm font-extrabold uppercase tracking-[0.08em] text-skate-text"
+              className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary"
             >
               {product.name}
             </Link>
@@ -35,7 +35,7 @@ function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <div className="flex items-center justify-between">
-          <p className="text-base font-black text-skate-text">
+          <p className="text-base font-black text-textPrimary">
             {product.price.toFixed(2)} €
           </p>
           <Button

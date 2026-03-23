@@ -30,7 +30,7 @@ function Home() {
           </h2>
           <Link
             to="/shop"
-            className="text-xs font-bold uppercase tracking-[0.14em] text-skate-acid"
+            className="text-xs font-bold uppercase tracking-[0.14em] text-acid"
           >
             View All
           </Link>
