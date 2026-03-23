@@ -5,11 +5,33 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider      = "prisma-client"
-  output        = "./generated"
-  moduleFormat  = "cjs"
+  provider = "prisma-client"
+  output   = "./generated/prisma"
 }
-
 datasource db {
   provider = "mysql"
+}
+
+model Account {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  firstname String
+  name  String
+  role  String @default("CLIENT")
+
+  jwt String?
+  
+  phone Phone[]
+}
+
+model Phone {
+  id        Int      @id @default(autoincrement())
+
+  code      String   @default("+33")
+  number    String   @unique
+
+  accountId Int
+  account   Account  @relation(fields: [accountId], references: [id])
 }
