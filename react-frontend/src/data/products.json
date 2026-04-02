@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "name": "VENICE STREET BOARD 8.25",
+    "category": "Boards",
+    "price": 84.99,
+    "badge": "NEW",
+    "inStock": true,
+    "popular": true,
+    "description": "Deck street polyvalent inspiré des spots de Venice Beach. Pop stable et concave medium.",
+    "images": [
+      "https://images.unsplash.com/photo-1547448415-e9f5b28e570d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1508973377-d2f6b22f3f8a?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1517949908118-7217f186b6e2?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "DTLA LOW PRO SHOES",
+    "category": "Shoes",
+    "price": 69.99,
+    "inStock": true,
+    "popular": true,
+    "description": "Chaussures skate basses avec semelle vulcanisée et grip haute résistance.",
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "SUNSET HOODIE HEAVY",
+    "category": "Apparel",
+    "price": 59.99,
+    "badge": "NEW",
+    "inStock": true,
+    "popular": false,
+    "description": "Hoodie coupe oversized en coton épais, parfait pour les sessions nocturnes.",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "ALLEY BEARINGS ABEC 9",
+    "category": "Accessories",
+    "price": 34.9,
+    "inStock": true,
+    "popular": true,
+    "description": "Jeu de roulements rapides, précis et durables pour street et park.",
+    "images": [
+      "https://images.unsplash.com/photo-1578926375605-eaf7559b1458?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1612287230015-1ff1f4f82a57?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "MELROSE CRUISER BOARD 8.0",
+    "category": "Boards",
+    "price": 79.5,
+    "inStock": false,
+    "badge": "SOLD OUT",
+    "popular": false,
+    "description": "Board cruiser nerveux avec shape compact, idéal pour la ville.",
+    "images": [
+      "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1564419434667-8fc1f23dd7f7?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "GRIP TAPE BLACK RAW",
+    "category": "Accessories",
+    "price": 14.5,
+    "inStock": true,
+    "popular": false,
+    "description": "Grip tape noir brut avec adhérence longue durée, coupe universelle.",
+    "images": [
+      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1517649948509-7f46f94a31f2?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "FAIRFAX SKATE TEE",
+    "category": "Apparel",
+    "price": 29.99,
+    "inStock": true,
+    "popular": true,
+    "description": "T-shirt premium coupe boxy avec print street inspiré de Fairfax Ave.",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1503341338985-95ca3f9f2d21?auto=format&fit=crop&w=1200&q=80"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "PARK SESSION SHOES",
+    "category": "Shoes",
+    "price": 74,
+    "inStock": true,
+    "popular": false,
+    "description": "Chaussures renforcées toe-cap et amorti talon pour impacts répétés.",
+    "images": [
+      "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=1200&q=80"
+    ]
+  }
+]

@@ -1,34 +1,66 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Navigate, Route, Routes } from "react-router";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
+import ProductPage from "./pages/ProductPage";
+import Cart from "./pages/Cart";
+import Account from "./pages/Account";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const isLoggedIn = (() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    try {
+      const rawSession = localStorage.getItem("mockSession");
+      if (!rawSession) {
+        return false;
+      }
+
+      const session = JSON.parse(rawSession) as { loggedIn?: boolean };
+      return session.loggedIn === true;
+    } catch {
+      return false;
+    }
+  })();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + baptou</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="min-h-screen bg-bgPrimary text-textPrimary">
+      <Navbar />
+
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/account"
+            element={
+              isLoggedIn ? <Account /> : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              isLoggedIn ? <Navigate to="/account" replace /> : <Login />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              isLoggedIn ? <Navigate to="/account" replace /> : <Register />
+            }
+          />
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
   );
 }
 
