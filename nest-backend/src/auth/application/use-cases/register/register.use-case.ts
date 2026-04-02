@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RegisterInput } from "./register.input";
 import { Account } from "../../../../compte/domain/account.entity";
-import { AuthRepositoryInterface } from "src/auth/domain/auth.repository";
+import { AuthRepositoryInterface } from "src/auth/application/repository/auth.repository";
 import { HashPasswordServiceInterface } from "../../repository/hash-password.repository";
 import { Password } from "src/auth/domain/value-objects/password.value-object";
 

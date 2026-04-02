@@ -1,10 +1,10 @@
 import { PrismaService } from "../../../shared/infrastructure/database/prisma.service";
-import { AuthRepositoryInterface } from "../../domain/auth.repository";
-import { Account } from "../../../compte/domain/account.entity";
+import { AuthRepositoryInterface } from "../../application/repository/auth.repository";
 import { Roles } from "../../../compte/domain/value-object/role.value-object";
 import { Email } from "../../../compte/domain/value-object/email.value-object";
 import { Password } from "src/auth/domain/value-objects/password.value-object";
 import { Injectable } from "@nestjs/common";
+import { Account } from "src/compte/domain/account.entity";
 
 @Injectable()
 export class PrismaAuthRepository implements AuthRepositoryInterface { 
@@ -44,7 +44,10 @@ export class PrismaAuthRepository implements AuthRepositoryInterface {
             throw new Error("Account not found");
         }
 
-        return Account.create({
+        console.log("Account found in database:", account);
+
+        return Account.reconstitute({
+            id: account.id,
             email: account.email,
             name: account.name,
             firstName: account.firstname,

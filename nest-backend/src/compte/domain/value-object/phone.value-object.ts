@@ -26,4 +26,8 @@ export class Phone {
         return phone.trim().replace(/\s+/g, '');
     }
 
+    getValue(): string {
+        return this.phone;
+    }
+
 }

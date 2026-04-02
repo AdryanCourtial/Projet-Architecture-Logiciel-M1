@@ -3,7 +3,17 @@ import { Email } from "./value-object/email.value-object";
 import { Phone } from "./value-object/phone.value-object";
 import { Role, Roles } from "./value-object/role.value-object";
 
-interface AccountProps {
+interface CreateAccountProps {
+    name: string;
+    firstName: string;
+    email: string;
+    password: Password;
+    role: Roles;
+    phone?: string;
+}
+
+interface ReconstituteAccountProps {
+    id: number;
     name: string;
     firstName: string;
     email: string;
@@ -13,8 +23,8 @@ interface AccountProps {
 }
 
 export class Account {
-
     private constructor(
+        private readonly id: number | null,
         private readonly name: string,
         private readonly firstName: string,
         private readonly email: Email,
@@ -29,9 +39,30 @@ export class Account {
         email,
         password,
         role,
-        phone
-    }: AccountProps): Account {
+        phone,
+    }: CreateAccountProps): Account {
         return new Account(
+            null,
+            this.normalizeName(name),
+            this.normalizeFirstName(firstName),
+            Email.create(email),
+            password,
+            Role.assign(role),
+            phone ? Phone.create(phone) : undefined
+        );
+    }
+
+    static reconstitute({
+        id,
+        name,
+        firstName,
+        email,
+        password,
+        role,
+        phone,
+    }: ReconstituteAccountProps): Account {
+        return new Account(
+            id,
             this.normalizeName(name),
             this.normalizeFirstName(firstName),
             Email.create(email),
@@ -45,15 +76,35 @@ export class Account {
         return name.trim().toLowerCase();
     }
 
-    static normalizeFirstName(firstName: string) {
-        return firstName.trim().toLowerCase()
+    static normalizeFirstName(firstName: string): string {
+        return firstName.trim().toLowerCase();
     }
 
-    getName(): string { return this.name }
-    getFirstName(): string { return this.firstName }
-    getEmail(): Email { return this.email }
-    getPhone(): Phone | undefined { return this.phone }
-    getRole(): Role { return this.role }
-    getPassword(): Password { return this.password }
+    getId(): number | null {
+        return this.id;
+    }
 
+    getName(): string {
+        return this.name;
+    }
+
+    getFirstName(): string {
+        return this.firstName;
+    }
+
+    getEmail(): Email {
+        return this.email;
+    }
+
+    getPhone(): Phone | undefined {
+        return this.phone;
+    }
+
+    getRole(): Role {
+        return this.role;
+    }
+
+    getPassword(): Password {
+        return this.password;
+    }
 }
