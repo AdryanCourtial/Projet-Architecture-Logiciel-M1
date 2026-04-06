@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { Product } from "src/product/domain/product.agregate";
-import { ProductRepositoryInterface } from "src/product/application/repository/auth.repository";
-import { PrismaService } from "src/shared/infrastructure/database/prisma.service";
+import { ProductRepositoryInterface } from "src/product/application/repository/product.repository";
 import { Money } from "src/product/domain/value-objects/money.value-object";
+import { Page, PaginationParams } from "src/shared/application/type/PaginationParams";
+import { PrismaService } from "../../../shared/infrastructure/database/prisma.service";
+import { Category } from "src/product/domain/category.entity";
 
 @Injectable()
 export class PrismaProductRepository implements ProductRepositoryInterface { 
@@ -11,6 +13,7 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
     ) {}
 
     async save(product: Product): Promise<Product> {
+
         try {
             if (product.getId()) {
                 const updatedProduct = await this.prismaService.product.update({
@@ -24,7 +27,8 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
                         stock: product.getStock() || 0
                     },
                     include: {
-                        reviews: true
+                        reviews: true,
+                        category: true
                     }
                 });
 
@@ -36,7 +40,12 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
                     stock: updatedProduct.stock,
                     reviews: updatedProduct.reviews?.map((review: any) => {
                         return review;
-                    })
+                    }),
+                    category: Category.create(
+                        updatedProduct.category.id,
+                        updatedProduct.category.name,
+                        updatedProduct.category.description
+                    )
                 });
             }
 
@@ -45,11 +54,12 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
                     name: product.getName(),
                     description: product.getDescription(),
                     price: product.getPrice().getAmount(),
-                    categoryId: 1,
+                    categoryId: product.getCategory().getId(),
                     stock: product.getStock() || 0
                 },
                 include: {
-                    reviews: true
+                    reviews: true,
+                    category: true
                 }
             });
     
@@ -61,7 +71,12 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
                 stock: savedProduct.stock,
                 reviews: savedProduct.reviews?.map((review: any) => {
                     return review;
-                })
+                }),
+                category: Category.create(
+                    savedProduct.category.id,
+                    savedProduct.category.name,
+                    savedProduct.category.description
+                )
             });
 
         } catch (error: any) {
@@ -94,6 +109,11 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
             description: product.description,
             price: Money.create(product.price),
             stock: product.stock,
+            category: Category.create(
+                product.category.id,
+                product.category.name,
+                product.category.description
+            ),
         });
 
     }
@@ -110,5 +130,47 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
 
     async findmany(id: number): Promise<Product[]> {
         return [];
+    }
+
+    async findWithPagination(pagination: PaginationParams, categoryId?: number): Promise<Page<Product>> {
+        const skip = (pagination.page - 1) * pagination.limit;
+
+        const where: any = {};
+        if (categoryId) {
+            where.categoryId = categoryId;
+        }
+
+        const products = await this.prismaService.product.findMany({
+            where,
+            skip,
+            take: pagination.limit,
+            include: { category: true, reviews: true },
+            orderBy: { id: "desc" }
+        });
+
+        const total = await this.prismaService.product.count({ where });
+
+        const data = products.map(product =>
+            Product.reconstitute({
+                id: product.id,
+                name: product.name,
+                description: product.description,
+                price: Money.create(product.price),
+                stock: product.stock,
+                category: Category.create(
+                    product.category.id,
+                    product.category.name,
+                    product.category.description
+                )
+            })
+        );
+
+        return {
+            items: data,
+            totalItems: total,
+            page: pagination.page,
+            limit: pagination.limit,
+            totalPages: Math.ceil(total / pagination.limit)
+        };
     }
 }

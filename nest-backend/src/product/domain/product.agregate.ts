@@ -1,11 +1,13 @@
 import { Review } from "src/review/domain/review.agregate";
 import { Money } from "./value-objects/money.value-object";
+import { Category } from "./category.entity";
 
 interface CreateProductProps {
     name: string;
     description: string;
     price: Money;
     stock: number | null;
+    category: Category;
 }
 
 interface ReconstituteProductProps {
@@ -14,6 +16,7 @@ interface ReconstituteProductProps {
     description: string;
     stock: number;
     price: Money;
+    category: Category;
     reviews?: Review[];
 }
 
@@ -24,6 +27,7 @@ export class Product {
         private readonly description: string,
         private readonly price: Money,
         private readonly stock: number | null,
+        private readonly category: Category,
         private readonly reviews: Review[] = []
     ) {}
 
@@ -32,13 +36,15 @@ export class Product {
         description,
         price,
         stock,
+        category
     }: CreateProductProps): Product {
         return new Product(
             null,
             this.normalizeName(name),
             description,
             price,
-            stock
+            stock,
+            category,
         );
     }
 
@@ -48,7 +54,8 @@ export class Product {
         description,
         price,
         stock,
-        reviews
+        reviews,
+        category
     }: ReconstituteProductProps): Product {
         return new Product(
             id,
@@ -56,6 +63,7 @@ export class Product {
             description,
             price,
             stock,
+            category,
             reviews
         );
     }
@@ -86,5 +94,9 @@ export class Product {
 
     getReviews(): Review[] {
         return this.reviews;
+    }
+
+    getCategory(): Category {
+        return this.category;
     }
 }

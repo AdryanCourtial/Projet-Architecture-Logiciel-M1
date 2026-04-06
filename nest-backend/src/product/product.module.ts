@@ -4,11 +4,13 @@ import { GetProductUseCase } from './application/use-cases/getProduct/deleteProd
 import { AddProductUseCase } from './application/use-cases/addProduct/addProduct.use-case';
 import { UpdateProductUseCase } from './application/use-cases/updateProduct/updateProduct.use-case';
 import { DeleteProductUseCase } from './application/use-cases/deleteProduct/deleteProduct.use-case';
-import { ProductRepositoryInterface } from './application/repository/auth.repository';
+import { GetAllProductsUseCase } from './application/use-cases/getAllProducts/getAllProducts.use-case';
+import { ProductRepositoryInterface } from './application/repository/product.repository';
 import { PrismaProductRepository } from './infrastructure/db/prisma-product.repository';
+import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
 
 @Module({
-    imports: [],
+    imports: [PrismaModule],
     providers: [
         {
             provide: ProductRepositoryInterface,
@@ -18,6 +20,7 @@ import { PrismaProductRepository } from './infrastructure/db/prisma-product.repo
         AddProductUseCase,
         UpdateProductUseCase,
         DeleteProductUseCase,
+        GetAllProductsUseCase,
     ],
     controllers: [ProductController],
 })

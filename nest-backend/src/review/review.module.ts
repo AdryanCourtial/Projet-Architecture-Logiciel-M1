@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ReviewController } from './interface/review.controller';
 import { PrismaReviewRepository } from './infrastructure/db/prisma-review.repository';
+import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
 
 import {
     CreateReviewUseCase,
@@ -11,7 +12,7 @@ import {
 import { IReviewRepository } from './application/repository/review.repository';
 
 @Module({
-    imports: [],
+    imports: [PrismaModule],
     providers: [
         {
             provide: IReviewRepository,

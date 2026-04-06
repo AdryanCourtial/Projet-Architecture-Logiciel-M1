@@ -1,5 +1,5 @@
-export const Roles = ["CLIENT", "ADMIN"] as const;
-export type Roles = (typeof Roles)[number];
+export const RolesEnum = ["CLIENT", "ADMIN"] as const;
+export type Roles = (typeof RolesEnum)[number];
 
 export class Role {
     private readonly role: Roles;
@@ -9,7 +9,7 @@ export class Role {
     }
 
     static assign(role: Roles): Role {
-        if (!Roles.includes(role)) {
+        if (!RolesEnum.includes(role)) {
             throw new Error("Invalid role");
         }
         return new Role(role);

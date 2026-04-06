@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ResponseGetProduct {
+export class GetAllProductsResponse {
+    
     @ApiProperty()
     id!: number;
 
@@ -17,15 +18,27 @@ export class ResponseGetProduct {
     stock!: number;
 
     @ApiProperty()
-    reviews!: {
-        id: number;
-        rating: number;
-        comment: string;
-    }[];
-    @ApiProperty()
     category!: {
         id: number;
         name: string;
         description: string;
-    }
+    };
+}
+
+export class GetAllProductsPaginatedResponse {
+
+    @ApiProperty()
+    data!: GetAllProductsResponse[];
+
+    @ApiProperty()
+    total!: number;
+
+    @ApiProperty()
+    page!: number;
+
+    @ApiProperty()
+    limit!: number;
+
+    @ApiProperty()
+    totalPages!: number;
 }
