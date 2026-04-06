@@ -8,8 +8,10 @@ generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
 }
+
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -21,9 +23,13 @@ model Account {
   name  String
   role  String @default("CLIENT")
 
-  jwt String?
+  basket Basket?
+  order Order[]
+
+  adress Adress[]
   
   phone Phone[]
+  reviews Review[]
 }
 
 model Phone {
@@ -34,4 +40,109 @@ model Phone {
 
   accountId Int
   account   Account  @relation(fields: [accountId], references: [id])
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  reviews     Review[]
+  backetItems  BasketItem[]
+  orderItems   OrderItem[]
+
+  stock       Int      @default(0)
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+
+  products     Product[]
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+
+  userId      Int
+  user      Account   @relation(fields: [userId], references: [id])
+
+  productId   Int
+  product     Product   @relation(fields: [productId], references: [id])
+
+  title       String
+  rating      Int
+  comment     String
+
+}
+
+model Basket {
+  id          Int      @id @default(autoincrement())
+
+  accountId Int      @unique
+  account   Account  @relation(fields: [accountId], references: [id])
+
+  items       BasketItem[]
+}
+
+model BasketItem {
+  id          Int      @id @default(autoincrement())
+
+  basketId    Int
+  basket      Basket   @relation(fields: [basketId], references: [id])
+
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+
+  quantity    Int
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+
+  accountId Int
+  account Account  @relation(fields: [accountId], references: [id])
+
+  status      String   @default("PENDING")
+  adressDeviveryId Int
+  adressDevivery Adress @relation("adressDevivery", fields: [adressDeviveryId], references: [id])
+
+  adressBillingId Int
+  adressBilling Adress @relation("adressBilling", fields: [adressBillingId], references: [id])
+
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id          Int      @id @default(autoincrement())
+
+  orderId     Int
+  order       Order    @relation(fields: [orderId], references: [id])
+
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+
+  quantity    Int
+}
+
+model Adress {
+  id          Int      @id @default(autoincrement())
+
+  accountId Int
+  account Account  @relation(fields: [accountId], references: [id])
+
+  street      String
+  city        String
+  postalCode  String
+  country     String
+
+  adressDeviveryOrder Order[] @relation("adressDevivery")
+  adressBillingOrder Order[] @relation("adressBilling")
+
+  @@unique([street, city, postalCode, country])
 }

@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Account
@@ -42,7 +42,6 @@ export type AccountMinAggregateOutputType = {
   firstname: string | null
   name: string | null
   role: string | null
-  jwt: string | null
 }
 
 export type AccountMaxAggregateOutputType = {
@@ -53,7 +52,6 @@ export type AccountMaxAggregateOutputType = {
   firstname: string | null
   name: string | null
   role: string | null
-  jwt: string | null
 }
 
 export type AccountCountAggregateOutputType = {
@@ -64,7 +62,6 @@ export type AccountCountAggregateOutputType = {
   firstname: number
   name: number
   role: number
-  jwt: number
   _all: number
 }
 
@@ -85,7 +82,6 @@ export type AccountMinAggregateInputType = {
   firstname?: true
   name?: true
   role?: true
-  jwt?: true
 }
 
 export type AccountMaxAggregateInputType = {
@@ -96,7 +92,6 @@ export type AccountMaxAggregateInputType = {
   firstname?: true
   name?: true
   role?: true
-  jwt?: true
 }
 
 export type AccountCountAggregateInputType = {
@@ -107,7 +102,6 @@ export type AccountCountAggregateInputType = {
   firstname?: true
   name?: true
   role?: true
-  jwt?: true
   _all?: true
 }
 
@@ -205,7 +199,6 @@ export type AccountGroupByOutputType = {
   firstname: string
   name: string
   role: string
-  jwt: string | null
   _count: AccountCountAggregateOutputType | null
   _avg: AccountAvgAggregateOutputType | null
   _sum: AccountSumAggregateOutputType | null
@@ -239,8 +232,11 @@ export type AccountWhereInput = {
   firstname?: Prisma.StringFilter<"Account"> | string
   name?: Prisma.StringFilter<"Account"> | string
   role?: Prisma.StringFilter<"Account"> | string
-  jwt?: Prisma.StringNullableFilter<"Account"> | string | null
+  basket?: Prisma.XOR<Prisma.BasketNullableScalarRelationFilter, Prisma.BasketWhereInput> | null
+  order?: Prisma.OrderListRelationFilter
+  adress?: Prisma.AdressListRelationFilter
   phone?: Prisma.PhoneListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
 }
 
 export type AccountOrderByWithRelationInput = {
@@ -251,8 +247,11 @@ export type AccountOrderByWithRelationInput = {
   firstname?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  jwt?: Prisma.SortOrderInput | Prisma.SortOrder
+  basket?: Prisma.BasketOrderByWithRelationInput
+  order?: Prisma.OrderOrderByRelationAggregateInput
+  adress?: Prisma.AdressOrderByRelationAggregateInput
   phone?: Prisma.PhoneOrderByRelationAggregateInput
+  reviews?: Prisma.ReviewOrderByRelationAggregateInput
   _relevance?: Prisma.AccountOrderByRelevanceInput
 }
 
@@ -267,8 +266,11 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   firstname?: Prisma.StringFilter<"Account"> | string
   name?: Prisma.StringFilter<"Account"> | string
   role?: Prisma.StringFilter<"Account"> | string
-  jwt?: Prisma.StringNullableFilter<"Account"> | string | null
+  basket?: Prisma.XOR<Prisma.BasketNullableScalarRelationFilter, Prisma.BasketWhereInput> | null
+  order?: Prisma.OrderListRelationFilter
+  adress?: Prisma.AdressListRelationFilter
   phone?: Prisma.PhoneListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
 }, "id" | "email">
 
 export type AccountOrderByWithAggregationInput = {
@@ -279,7 +281,6 @@ export type AccountOrderByWithAggregationInput = {
   firstname?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  jwt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AccountCountOrderByAggregateInput
   _avg?: Prisma.AccountAvgOrderByAggregateInput
   _max?: Prisma.AccountMaxOrderByAggregateInput
@@ -298,7 +299,6 @@ export type AccountScalarWhereWithAggregatesInput = {
   firstname?: Prisma.StringWithAggregatesFilter<"Account"> | string
   name?: Prisma.StringWithAggregatesFilter<"Account"> | string
   role?: Prisma.StringWithAggregatesFilter<"Account"> | string
-  jwt?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
 }
 
 export type AccountCreateInput = {
@@ -308,8 +308,11 @@ export type AccountCreateInput = {
   firstname: string
   name: string
   role?: string
-  jwt?: string | null
+  basket?: Prisma.BasketCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressCreateNestedManyWithoutAccountInput
   phone?: Prisma.PhoneCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
 }
 
 export type AccountUncheckedCreateInput = {
@@ -320,8 +323,11 @@ export type AccountUncheckedCreateInput = {
   firstname: string
   name: string
   role?: string
-  jwt?: string | null
+  basket?: Prisma.BasketUncheckedCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderUncheckedCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressUncheckedCreateNestedManyWithoutAccountInput
   phone?: Prisma.PhoneUncheckedCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type AccountUpdateInput = {
@@ -331,8 +337,11 @@ export type AccountUpdateInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basket?: Prisma.BasketUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUpdateManyWithoutAccountNestedInput
   phone?: Prisma.PhoneUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
 }
 
 export type AccountUncheckedUpdateInput = {
@@ -343,8 +352,11 @@ export type AccountUncheckedUpdateInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basket?: Prisma.BasketUncheckedUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUncheckedUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUncheckedUpdateManyWithoutAccountNestedInput
   phone?: Prisma.PhoneUncheckedUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type AccountCreateManyInput = {
@@ -355,7 +367,6 @@ export type AccountCreateManyInput = {
   firstname: string
   name: string
   role?: string
-  jwt?: string | null
 }
 
 export type AccountUpdateManyMutationInput = {
@@ -365,7 +376,6 @@ export type AccountUpdateManyMutationInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AccountUncheckedUpdateManyInput = {
@@ -376,7 +386,6 @@ export type AccountUncheckedUpdateManyInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AccountOrderByRelevanceInput = {
@@ -393,7 +402,6 @@ export type AccountCountOrderByAggregateInput = {
   firstname?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  jwt?: Prisma.SortOrder
 }
 
 export type AccountAvgOrderByAggregateInput = {
@@ -408,7 +416,6 @@ export type AccountMaxOrderByAggregateInput = {
   firstname?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  jwt?: Prisma.SortOrder
 }
 
 export type AccountMinOrderByAggregateInput = {
@@ -419,7 +426,6 @@ export type AccountMinOrderByAggregateInput = {
   firstname?: Prisma.SortOrder
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  jwt?: Prisma.SortOrder
 }
 
 export type AccountSumOrderByAggregateInput = {
@@ -437,10 +443,6 @@ export type StringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -465,6 +467,62 @@ export type AccountUpdateOneRequiredWithoutPhoneNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutPhoneInput, Prisma.AccountUpdateWithoutPhoneInput>, Prisma.AccountUncheckedUpdateWithoutPhoneInput>
 }
 
+export type AccountCreateNestedOneWithoutReviewsInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutReviewsInput, Prisma.AccountUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutReviewsInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneRequiredWithoutReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutReviewsInput, Prisma.AccountUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutReviewsInput
+  upsert?: Prisma.AccountUpsertWithoutReviewsInput
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutReviewsInput, Prisma.AccountUpdateWithoutReviewsInput>, Prisma.AccountUncheckedUpdateWithoutReviewsInput>
+}
+
+export type AccountCreateNestedOneWithoutBasketInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutBasketInput, Prisma.AccountUncheckedCreateWithoutBasketInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutBasketInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneRequiredWithoutBasketNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutBasketInput, Prisma.AccountUncheckedCreateWithoutBasketInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutBasketInput
+  upsert?: Prisma.AccountUpsertWithoutBasketInput
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutBasketInput, Prisma.AccountUpdateWithoutBasketInput>, Prisma.AccountUncheckedUpdateWithoutBasketInput>
+}
+
+export type AccountCreateNestedOneWithoutOrderInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutOrderInput, Prisma.AccountUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutOrderInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneRequiredWithoutOrderNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutOrderInput, Prisma.AccountUncheckedCreateWithoutOrderInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutOrderInput
+  upsert?: Prisma.AccountUpsertWithoutOrderInput
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutOrderInput, Prisma.AccountUpdateWithoutOrderInput>, Prisma.AccountUncheckedUpdateWithoutOrderInput>
+}
+
+export type AccountCreateNestedOneWithoutAdressInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutAdressInput, Prisma.AccountUncheckedCreateWithoutAdressInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutAdressInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneRequiredWithoutAdressNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutAdressInput, Prisma.AccountUncheckedCreateWithoutAdressInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutAdressInput
+  upsert?: Prisma.AccountUpsertWithoutAdressInput
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutAdressInput, Prisma.AccountUpdateWithoutAdressInput>, Prisma.AccountUncheckedUpdateWithoutAdressInput>
+}
+
 export type AccountCreateWithoutPhoneInput = {
   email: string
   password: string
@@ -472,7 +530,10 @@ export type AccountCreateWithoutPhoneInput = {
   firstname: string
   name: string
   role?: string
-  jwt?: string | null
+  basket?: Prisma.BasketCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
 }
 
 export type AccountUncheckedCreateWithoutPhoneInput = {
@@ -483,7 +544,10 @@ export type AccountUncheckedCreateWithoutPhoneInput = {
   firstname: string
   name: string
   role?: string
-  jwt?: string | null
+  basket?: Prisma.BasketUncheckedCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderUncheckedCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressUncheckedCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type AccountCreateOrConnectWithoutPhoneInput = {
@@ -509,7 +573,10 @@ export type AccountUpdateWithoutPhoneInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basket?: Prisma.BasketUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutPhoneInput = {
@@ -520,7 +587,290 @@ export type AccountUncheckedUpdateWithoutPhoneInput = {
   firstname?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
-  jwt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basket?: Prisma.BasketUncheckedUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUncheckedUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUncheckedUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type AccountCreateWithoutReviewsInput = {
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneCreateNestedManyWithoutAccountInput
+}
+
+export type AccountUncheckedCreateWithoutReviewsInput = {
+  id?: number
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketUncheckedCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderUncheckedCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressUncheckedCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type AccountCreateOrConnectWithoutReviewsInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutReviewsInput, Prisma.AccountUncheckedCreateWithoutReviewsInput>
+}
+
+export type AccountUpsertWithoutReviewsInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutReviewsInput, Prisma.AccountUncheckedUpdateWithoutReviewsInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutReviewsInput, Prisma.AccountUncheckedCreateWithoutReviewsInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutReviewsInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutReviewsInput, Prisma.AccountUncheckedUpdateWithoutReviewsInput>
+}
+
+export type AccountUpdateWithoutReviewsInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUncheckedUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUncheckedUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUncheckedUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type AccountCreateWithoutBasketInput = {
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  order?: Prisma.OrderCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+}
+
+export type AccountUncheckedCreateWithoutBasketInput = {
+  id?: number
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  order?: Prisma.OrderUncheckedCreateNestedManyWithoutAccountInput
+  adress?: Prisma.AdressUncheckedCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneUncheckedCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type AccountCreateOrConnectWithoutBasketInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutBasketInput, Prisma.AccountUncheckedCreateWithoutBasketInput>
+}
+
+export type AccountUpsertWithoutBasketInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutBasketInput, Prisma.AccountUncheckedUpdateWithoutBasketInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutBasketInput, Prisma.AccountUncheckedCreateWithoutBasketInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutBasketInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutBasketInput, Prisma.AccountUncheckedUpdateWithoutBasketInput>
+}
+
+export type AccountUpdateWithoutBasketInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.OrderUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutBasketInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.OrderUncheckedUpdateManyWithoutAccountNestedInput
+  adress?: Prisma.AdressUncheckedUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUncheckedUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type AccountCreateWithoutOrderInput = {
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketCreateNestedOneWithoutAccountInput
+  adress?: Prisma.AdressCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+}
+
+export type AccountUncheckedCreateWithoutOrderInput = {
+  id?: number
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketUncheckedCreateNestedOneWithoutAccountInput
+  adress?: Prisma.AdressUncheckedCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneUncheckedCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type AccountCreateOrConnectWithoutOrderInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutOrderInput, Prisma.AccountUncheckedCreateWithoutOrderInput>
+}
+
+export type AccountUpsertWithoutOrderInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutOrderInput, Prisma.AccountUncheckedUpdateWithoutOrderInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutOrderInput, Prisma.AccountUncheckedCreateWithoutOrderInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutOrderInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutOrderInput, Prisma.AccountUncheckedUpdateWithoutOrderInput>
+}
+
+export type AccountUpdateWithoutOrderInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUpdateOneWithoutAccountNestedInput
+  adress?: Prisma.AdressUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutOrderInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUncheckedUpdateOneWithoutAccountNestedInput
+  adress?: Prisma.AdressUncheckedUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUncheckedUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type AccountCreateWithoutAdressInput = {
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+}
+
+export type AccountUncheckedCreateWithoutAdressInput = {
+  id?: number
+  email: string
+  password: string
+  createdAt?: Date | string
+  firstname: string
+  name: string
+  role?: string
+  basket?: Prisma.BasketUncheckedCreateNestedOneWithoutAccountInput
+  order?: Prisma.OrderUncheckedCreateNestedManyWithoutAccountInput
+  phone?: Prisma.PhoneUncheckedCreateNestedManyWithoutAccountInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type AccountCreateOrConnectWithoutAdressInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutAdressInput, Prisma.AccountUncheckedCreateWithoutAdressInput>
+}
+
+export type AccountUpsertWithoutAdressInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutAdressInput, Prisma.AccountUncheckedUpdateWithoutAdressInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutAdressInput, Prisma.AccountUncheckedCreateWithoutAdressInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutAdressInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutAdressInput, Prisma.AccountUncheckedUpdateWithoutAdressInput>
+}
+
+export type AccountUpdateWithoutAdressInput = {
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutAdressInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  basket?: Prisma.BasketUncheckedUpdateOneWithoutAccountNestedInput
+  order?: Prisma.OrderUncheckedUpdateManyWithoutAccountNestedInput
+  phone?: Prisma.PhoneUncheckedUpdateManyWithoutAccountNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -529,11 +879,17 @@ export type AccountUncheckedUpdateWithoutPhoneInput = {
  */
 
 export type AccountCountOutputType = {
+  order: number
+  adress: number
   phone: number
+  reviews: number
 }
 
 export type AccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  order?: boolean | AccountCountOutputTypeCountOrderArgs
+  adress?: boolean | AccountCountOutputTypeCountAdressArgs
   phone?: boolean | AccountCountOutputTypeCountPhoneArgs
+  reviews?: boolean | AccountCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -549,8 +905,29 @@ export type AccountCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
 /**
  * AccountCountOutputType without action
  */
+export type AccountCountOutputTypeCountOrderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderWhereInput
+}
+
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountAdressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AdressWhereInput
+}
+
+/**
+ * AccountCountOutputType without action
+ */
 export type AccountCountOutputTypeCountPhoneArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PhoneWhereInput
+}
+
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewWhereInput
 }
 
 
@@ -562,8 +939,11 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   firstname?: boolean
   name?: boolean
   role?: boolean
-  jwt?: boolean
+  basket?: boolean | Prisma.Account$basketArgs<ExtArgs>
+  order?: boolean | Prisma.Account$orderArgs<ExtArgs>
+  adress?: boolean | Prisma.Account$adressArgs<ExtArgs>
   phone?: boolean | Prisma.Account$phoneArgs<ExtArgs>
+  reviews?: boolean | Prisma.Account$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
@@ -577,19 +957,26 @@ export type AccountSelectScalar = {
   firstname?: boolean
   name?: boolean
   role?: boolean
-  jwt?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "createdAt" | "firstname" | "name" | "role" | "jwt", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "createdAt" | "firstname" | "name" | "role", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  basket?: boolean | Prisma.Account$basketArgs<ExtArgs>
+  order?: boolean | Prisma.Account$orderArgs<ExtArgs>
+  adress?: boolean | Prisma.Account$adressArgs<ExtArgs>
   phone?: boolean | Prisma.Account$phoneArgs<ExtArgs>
+  reviews?: boolean | Prisma.Account$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Account"
   objects: {
+    basket: Prisma.$BasketPayload<ExtArgs> | null
+    order: Prisma.$OrderPayload<ExtArgs>[]
+    adress: Prisma.$AdressPayload<ExtArgs>[]
     phone: Prisma.$PhonePayload<ExtArgs>[]
+    reviews: Prisma.$ReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -599,7 +986,6 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     firstname: string
     name: string
     role: string
-    jwt: string | null
   }, ExtArgs["result"]["account"]>
   composites: {}
 }
@@ -940,7 +1326,11 @@ readonly fields: AccountFieldRefs;
  */
 export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  basket<T extends Prisma.Account$basketArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$basketArgs<ExtArgs>>): Prisma.Prisma__BasketClient<runtime.Types.Result.GetResult<Prisma.$BasketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  order<T extends Prisma.Account$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$orderArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  adress<T extends Prisma.Account$adressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$adressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   phone<T extends Prisma.Account$phoneArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$phoneArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PhonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviews<T extends Prisma.Account$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -977,7 +1367,6 @@ export interface AccountFieldRefs {
   readonly firstname: Prisma.FieldRef<"Account", 'String'>
   readonly name: Prisma.FieldRef<"Account", 'String'>
   readonly role: Prisma.FieldRef<"Account", 'String'>
-  readonly jwt: Prisma.FieldRef<"Account", 'String'>
 }
     
 
@@ -1321,6 +1710,73 @@ export type AccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Account.basket
+ */
+export type Account$basketArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Basket
+   */
+  select?: Prisma.BasketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Basket
+   */
+  omit?: Prisma.BasketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BasketInclude<ExtArgs> | null
+  where?: Prisma.BasketWhereInput
+}
+
+/**
+ * Account.order
+ */
+export type Account$orderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null
+  where?: Prisma.OrderWhereInput
+  orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[]
+  cursor?: Prisma.OrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * Account.adress
+ */
+export type Account$adressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Adress
+   */
+  select?: Prisma.AdressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Adress
+   */
+  omit?: Prisma.AdressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdressInclude<ExtArgs> | null
+  where?: Prisma.AdressWhereInput
+  orderBy?: Prisma.AdressOrderByWithRelationInput | Prisma.AdressOrderByWithRelationInput[]
+  cursor?: Prisma.AdressWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AdressScalarFieldEnum | Prisma.AdressScalarFieldEnum[]
+}
+
+/**
  * Account.phone
  */
 export type Account$phoneArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1342,6 +1798,30 @@ export type Account$phoneArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.PhoneScalarFieldEnum | Prisma.PhoneScalarFieldEnum[]
+}
+
+/**
+ * Account.reviews
+ */
+export type Account$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Review
+   */
+  select?: Prisma.ReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Review
+   */
+  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewInclude<ExtArgs> | null
+  where?: Prisma.ReviewWhereInput
+  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
 }
 
 /**

@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.js'
+export type * from './prismaNamespace.js'
 
 export const Decimal = runtime.Decimal
 
@@ -52,7 +52,15 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Account: 'Account',
-  Phone: 'Phone'
+  Phone: 'Phone',
+  Product: 'Product',
+  Category: 'Category',
+  Review: 'Review',
+  Basket: 'Basket',
+  BasketItem: 'BasketItem',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  Adress: 'Adress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -78,8 +86,7 @@ export const AccountScalarFieldEnum = {
   createdAt: 'createdAt',
   firstname: 'firstname',
   name: 'name',
-  role: 'role',
-  jwt: 'jwt'
+  role: 'role'
 } as const
 
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
@@ -95,6 +102,90 @@ export const PhoneScalarFieldEnum = {
 export type PhoneScalarFieldEnum = (typeof PhoneScalarFieldEnum)[keyof typeof PhoneScalarFieldEnum]
 
 
+export const ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  categoryId: 'categoryId',
+  stock: 'stock'
+} as const
+
+export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description'
+} as const
+
+export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  title: 'title',
+  rating: 'rating',
+  comment: 'comment'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const BasketScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId'
+} as const
+
+export type BasketScalarFieldEnum = (typeof BasketScalarFieldEnum)[keyof typeof BasketScalarFieldEnum]
+
+
+export const BasketItemScalarFieldEnum = {
+  id: 'id',
+  basketId: 'basketId',
+  productId: 'productId',
+  quantity: 'quantity'
+} as const
+
+export type BasketItemScalarFieldEnum = (typeof BasketItemScalarFieldEnum)[keyof typeof BasketItemScalarFieldEnum]
+
+
+export const OrderScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  status: 'status',
+  adressDeviveryId: 'adressDeviveryId',
+  adressBillingId: 'adressBillingId'
+} as const
+
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity'
+} as const
+
+export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const AdressScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  street: 'street',
+  city: 'city',
+  postalCode: 'postalCode',
+  country: 'country'
+} as const
+
+export type AdressScalarFieldEnum = (typeof AdressScalarFieldEnum)[keyof typeof AdressScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -103,21 +194,12 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
 export const AccountOrderByRelevanceFieldEnum = {
   email: 'email',
   password: 'password',
   firstname: 'firstname',
   name: 'name',
-  role: 'role',
-  jwt: 'jwt'
+  role: 'role'
 } as const
 
 export type AccountOrderByRelevanceFieldEnum = (typeof AccountOrderByRelevanceFieldEnum)[keyof typeof AccountOrderByRelevanceFieldEnum]
@@ -129,4 +211,45 @@ export const PhoneOrderByRelevanceFieldEnum = {
 } as const
 
 export type PhoneOrderByRelevanceFieldEnum = (typeof PhoneOrderByRelevanceFieldEnum)[keyof typeof PhoneOrderByRelevanceFieldEnum]
+
+
+export const ProductOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description'
+} as const
+
+export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFieldEnum)[keyof typeof ProductOrderByRelevanceFieldEnum]
+
+
+export const CategoryOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description'
+} as const
+
+export type CategoryOrderByRelevanceFieldEnum = (typeof CategoryOrderByRelevanceFieldEnum)[keyof typeof CategoryOrderByRelevanceFieldEnum]
+
+
+export const ReviewOrderByRelevanceFieldEnum = {
+  title: 'title',
+  comment: 'comment'
+} as const
+
+export type ReviewOrderByRelevanceFieldEnum = (typeof ReviewOrderByRelevanceFieldEnum)[keyof typeof ReviewOrderByRelevanceFieldEnum]
+
+
+export const OrderOrderByRelevanceFieldEnum = {
+  status: 'status'
+} as const
+
+export type OrderOrderByRelevanceFieldEnum = (typeof OrderOrderByRelevanceFieldEnum)[keyof typeof OrderOrderByRelevanceFieldEnum]
+
+
+export const AdressOrderByRelevanceFieldEnum = {
+  street: 'street',
+  city: 'city',
+  postalCode: 'postalCode',
+  country: 'country'
+} as const
+
+export type AdressOrderByRelevanceFieldEnum = (typeof AdressOrderByRelevanceFieldEnum)[keyof typeof AdressOrderByRelevanceFieldEnum]
 

@@ -64,8 +64,6 @@ export class AuthController {
     @Get("me")
     async me(@Req() req: any): Promise<ResponseMeDto> {
 
-        console.log('session =', req.session);
-
         const account = await this.meUseCase.execute({
             email: req.session.email,
         })
