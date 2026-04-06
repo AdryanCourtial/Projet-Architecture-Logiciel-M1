@@ -23,5 +23,6 @@ import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
         GetAllProductsUseCase,
     ],
     controllers: [ProductController],
+    exports: [ProductRepositoryInterface],
 })
 export class ProductModule {}

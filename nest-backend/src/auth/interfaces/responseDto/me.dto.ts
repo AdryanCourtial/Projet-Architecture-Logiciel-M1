@@ -1,7 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
-import { Phone } from "src/compte/domain/value-object/phone.value-object";
-import { Roles } from "src/compte/domain/value-object/role.value-object";
+import { Roles, RolesEnum } from "src/compte/domain/value-object/role.value-object";
 
 export class ResponseMeDto {
 
@@ -14,7 +12,7 @@ export class ResponseMeDto {
     @ApiProperty()
     email!: string;
 
-    @ApiProperty({ enum: Roles })
+    @ApiProperty({ enum: RolesEnum })
     role!: Roles;
 
     @ApiProperty({ required: false })
