@@ -43,14 +43,12 @@ export class OrderController {
         totalPrice: order.getTotalPrice().getAmount(),
         totalItems: order.getTotalItems(),
         deliveryAddress: {
-          id: order.getDeliveryAddress().getId()!,
           city: order.getDeliveryAddress().getCity(),
           country: order.getDeliveryAddress().getCountry(),
           postalCode: order.getDeliveryAddress().getPostalCode(),
           street: order.getDeliveryAddress().getStreet(),
         },
         billingAddress: {
-          id: order.getBillingAddress().getId()!,
           city: order.getBillingAddress().getCity(),
           country: order.getBillingAddress().getCountry(),
           postalCode: order.getBillingAddress().getPostalCode(),
@@ -70,6 +68,10 @@ export class OrderController {
 
       const deliveryAddress = await this.addressService.getAddressById(order.getDeliveryAddress().getId()!);
       const billingAddress = await this.addressService.getAddressById(order.getBillingAddress().getId()!);
+
+      console.log('Fetched order:', order);
+      console.log('Fetched delivery address:', deliveryAddress);
+      console.log('Fetched billing address:', billingAddress);
 
       return OrderWithAddressesMapper.toDetailResponse(order, deliveryAddress, billingAddress);
   }

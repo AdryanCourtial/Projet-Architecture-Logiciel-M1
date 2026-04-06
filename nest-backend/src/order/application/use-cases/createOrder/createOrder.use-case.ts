@@ -25,7 +25,7 @@ export class CreateOrderUseCase {
         throw new Error('Delivery and billing address must be provided');
       }
 
-      const dAdress = await this.addressService.createAddress({
+      const dAdress = await this.addressService.createorFindAddress({
         accountId: input.accountId,
         street: input.deliveryAddress.street,
         city: input.deliveryAddress.city,
@@ -33,7 +33,7 @@ export class CreateOrderUseCase {
         country: input.deliveryAddress.country
       });
 
-      const bAdress = await this.addressService.createAddress({
+      const bAdress = await this.addressService.createorFindAddress({
         accountId: input.accountId,
         street: input.billingAddress.street,
         city: input.billingAddress.city,
@@ -46,10 +46,10 @@ export class CreateOrderUseCase {
       );
 
       const order = Order.create(
-        input.accountId,
-        orderLines,
-        dAdress,
-        bAdress
+          input.accountId,
+          orderLines,
+          dAdress,
+          bAdress
       );
 
       const savedOrder = await this.orderRepository.save(order);

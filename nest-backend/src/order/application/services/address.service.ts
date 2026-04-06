@@ -7,7 +7,7 @@ import { CreateAddressDTO } from '../use-cases/createAddress/createAddress.use-c
 export class AddressService {
   constructor(private addressRepository: AddressRepositoryInterface) {}
 
-  async createAddress(dto: CreateAddressDTO): Promise<Address> {
+  async createorFindAddress(dto: CreateAddressDTO): Promise<Address> {
     const address = Address.create(
       dto.accountId,
       dto.street,
@@ -15,6 +15,12 @@ export class AddressService {
       dto.postalCode,
       dto.country
     );
+    
+    const adresses = await this.addressRepository.findByUniqueId(dto.street, dto.country, dto.postalCode, dto.city);
+
+    if (adresses) {
+      return adresses;
+    }
 
     return await this.addressRepository.save(address);
   }

@@ -5,14 +5,12 @@ export class PostOrderResponseDto {
     totalPrice!: number;
     totalItems!: number;
     deliveryAddress!: {
-        id: number;
         street: string;
         city: string;
         postalCode: string;
         country: string;
     }
     billingAddress!: {
-        id: number;
         street: string;
         city: string;
         postalCode: string;

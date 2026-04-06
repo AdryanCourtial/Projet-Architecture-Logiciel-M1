@@ -8,12 +8,15 @@ import {
     UseGuards,
     Req,
 } from '@nestjs/common';
-import { CreateReviewUseCase, GetReviewsByProductUseCase, GetReviewsByUserUseCase, GetAverageRatingUseCase } from '../application/use-cases';
 import { CreateReviewDto, ReviewQueryDto } from './requestDto/create-review.dto';
 import { ReviewResponseDto, ReviewPageResponseDto, AverageRatingResponseDto } from './responseDto/review.response.dto';
 import { Review } from '../domain/review.agregate';
 import { PaginationParams } from 'src/shared/application/type/PaginationParams';
 import { SessionAuthGuard } from 'src/auth/interfaces/guards/session.guard';
+import { CreateReviewUseCase } from '../application/use-cases/create-review.use-case';
+import { GetReviewsByProductUseCase } from '../application/use-cases/get-reviews-by-product.use-case';
+import { GetReviewsByUserUseCase } from '../application/use-cases/get-reviews-by-user.use-case';
+import { GetAverageRatingUseCase } from '../application/use-cases/get-average-rating.use-case';
 
 @Controller('reviews')
 @UseGuards(SessionAuthGuard)

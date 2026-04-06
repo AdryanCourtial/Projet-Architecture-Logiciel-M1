@@ -1,10 +1,6 @@
 import { Review } from 'src/review/domain/review.agregate';
 import { Page, PaginationParams } from 'src/shared/application/type/PaginationParams';
 
-/**
- * Review Repository Interface
- * Définit les contrats pour la persistence des reviews
- */
 export abstract class IReviewRepository {
     abstract save(review: Review): Promise<Review>;
     abstract findById(id: number): Promise<Review | null>;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Order, OrderStatus } from '../../domain/order.aggregate';
 import { OrderLine } from '../../domain/order-line.entity';
+import { Address } from '../../domain/address.entity';
 import { OrderRepositoryInterface } from '../../application/repository/order.repository';
 import { PrismaService } from 'src/shared/infrastructure/database/prisma.service';
 import { Product } from 'src/product/domain/product.agregate';
@@ -29,7 +30,9 @@ export class PrismaOrderRepository implements OrderRepositoryInterface {
         include: {
           items: {
             include: { product: { include: { category: true } } }
-          }
+          },
+          adressDevivery: true,
+          adressBilling: true
         }
       });
 
@@ -45,7 +48,9 @@ export class PrismaOrderRepository implements OrderRepositoryInterface {
       include: {
         items: {
           include: { product: { include: { category: true } } }
-        }
+        },
+        adressDevivery: true,
+        adressBilling: true
       }
     });
 
@@ -62,7 +67,9 @@ export class PrismaOrderRepository implements OrderRepositoryInterface {
       include: {
         items: {
           include: { product: { include: { category: true } } }
-        }
+        },
+        adressDevivery: true,
+        adressBilling: true
       }
     });
 
@@ -90,13 +97,34 @@ export class PrismaOrderRepository implements OrderRepositoryInterface {
       )
     );
 
+    // Reconstituer les objets Address
+    const deliveryAddress = Address.reconstitute(
+      orderData.adressDevivery.id,
+      orderData.adressDevivery.accountId,
+      orderData.adressDevivery.street,
+      orderData.adressDevivery.city,
+      orderData.adressDevivery.postalCode,
+      orderData.adressDevivery.country,
+      orderData.adressDevivery.createdAt
+    );
+
+    const billingAddress = Address.reconstitute(
+      orderData.adressBilling.id,
+      orderData.adressBilling.accountId,
+      orderData.adressBilling.street,
+      orderData.adressBilling.city,
+      orderData.adressBilling.postalCode,
+      orderData.adressBilling.country,
+      orderData.adressBilling.createdAt
+    );
+
     return Order.reconstitute(
       orderData.id,
       orderData.accountId,
       lines,
       orderData.status as OrderStatus,
-      orderData.adressDeviveryId,
-      orderData.adressBillingId,
+      deliveryAddress,
+      billingAddress,
       orderData.createdAt || new Date()
     );
   }

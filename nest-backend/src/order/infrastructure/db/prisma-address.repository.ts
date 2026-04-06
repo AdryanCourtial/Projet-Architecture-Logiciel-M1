@@ -21,6 +21,7 @@ export class PrismaAddressRepository implements AddressRepositoryInterface {
 
       return this.mapToAddress(addressData);
     } catch (error: any) {
+        console.log('Error saving address:', error);
       throw new Error('Failed to save address');
     }
   }
@@ -28,6 +29,13 @@ export class PrismaAddressRepository implements AddressRepositoryInterface {
   async findById(id: number): Promise<Address> {
     const addressData = await this.prismaService.adress.findUnique({
       where: { id },
+    });
+    return this.mapToAddress(addressData);
+  }
+
+  async findByUniqueId(street: string, country: string, postalCode: string, city: string): Promise<Address> {
+    const addressData = await this.prismaService.adress.findFirst({
+      where: { street, country, postalCode, city },
     });
 
     if (!addressData) {
