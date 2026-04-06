@@ -1,18 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
+import useAuth from "../auth/useAuth";
 
 type AccountData = {
   firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   address: string;
   phone: string;
-};
-
-type MockUser = {
-  firstName: string;
-  lastName: string;
-  email: string;
 };
 
 type InvoiceLine = {
@@ -31,47 +26,53 @@ type Invoice = {
 };
 
 const INVOICES_STORAGE_KEY = "mockInvoices";
-const MOCK_USER_KEY = "mockUser";
-const MOCK_ACCOUNT_KEY = "mockAccountProfile";
 
 const fallbackAccount: AccountData = {
   firstName: "Guest",
-  lastName: "User",
+  name: "User",
   email: "guest@example.com",
   address: "",
   phone: "",
 };
 
-const getInitialAccount = (): AccountData => {
-  try {
-    const rawAccount = localStorage.getItem(MOCK_ACCOUNT_KEY);
-    if (rawAccount) {
-      return JSON.parse(rawAccount) as AccountData;
-    }
+const getContactStorageKey = (email: string) => `accountContact:${email}`;
 
-    const rawUser = localStorage.getItem(MOCK_USER_KEY);
-    if (rawUser) {
-      const user = JSON.parse(rawUser) as MockUser;
-      return {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        address: "",
-        phone: "",
-      };
+const loadContactData = (
+  email: string,
+): Pick<AccountData, "address" | "phone"> => {
+  try {
+    const rawAccount = localStorage.getItem(getContactStorageKey(email));
+
+    if (rawAccount) {
+      return JSON.parse(rawAccount) as Pick<AccountData, "address" | "phone">;
     }
   } catch {
-    return fallbackAccount;
+    return { address: "", phone: "" };
   }
 
-  return fallbackAccount;
+  return { address: "", phone: "" };
 };
 
+const buildAccountFromUser = (user: {
+  firstName: string;
+  name: string;
+  email: string;
+  role: string;
+} | null): AccountData => ({
+  firstName: user?.firstName ?? fallbackAccount.firstName,
+  name: user?.name ?? fallbackAccount.name,
+  email: user?.email ?? fallbackAccount.email,
+  ...loadContactData(user?.email ?? fallbackAccount.email),
+});
+
 function Account() {
+  const { user } = useAuth();
   const [account, setAccount] = useState<AccountData>(() =>
-    getInitialAccount(),
+    buildAccountFromUser(user),
   );
-  const [draft, setDraft] = useState<AccountData>(() => getInitialAccount());
+  const [draft, setDraft] = useState<AccountData>(() =>
+    buildAccountFromUser(user),
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [invoices] = useState<Invoice[]>(() => {
     try {
@@ -81,6 +82,13 @@ function Account() {
       return [];
     }
   });
+
+  useEffect(() => {
+    const nextAccount = buildAccountFromUser(user);
+    setAccount(nextAccount);
+    setDraft(nextAccount);
+    setIsEditing(false);
+  }, [user?.email, user?.firstName, user?.name]);
 
   const startEdit = () => {
     setDraft(account);
@@ -94,7 +102,10 @@ function Account() {
 
   const saveEdit = () => {
     setAccount(draft);
-    localStorage.setItem(MOCK_ACCOUNT_KEY, JSON.stringify(draft));
+    localStorage.setItem(
+      getContactStorageKey(draft.email),
+      JSON.stringify({ address: draft.address, phone: draft.phone }),
+    );
     setIsEditing(false);
   };
 
@@ -133,42 +144,20 @@ function Account() {
         <div className="grid grid-cols-1 divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0">
           <div className="space-y-1 p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
-              First Name
+              Firstname
             </p>
-            {isEditing ? (
-              <input
-                type="text"
-                value={displayedAccount.firstName}
-                onChange={(event) =>
-                  updateField("firstName", event.target.value)
-                }
-                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
-              />
-            ) : (
-              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
-                {displayedAccount.firstName}
-              </p>
-            )}
+            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+              {displayedAccount.firstName}
+            </p>
           </div>
 
           <div className="space-y-1 p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
-              Last Name
+              Name
             </p>
-            {isEditing ? (
-              <input
-                type="text"
-                value={displayedAccount.lastName}
-                onChange={(event) =>
-                  updateField("lastName", event.target.value)
-                }
-                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
-              />
-            ) : (
-              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
-                {displayedAccount.lastName}
-              </p>
-            )}
+            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+              {displayedAccount.name}
+            </p>
           </div>
         </div>
 
@@ -177,18 +166,9 @@ function Account() {
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
               Email
             </p>
-            {isEditing ? (
-              <input
-                type="email"
-                value={displayedAccount.email}
-                onChange={(event) => updateField("email", event.target.value)}
-                className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
-              />
-            ) : (
-              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
-                {displayedAccount.email}
-              </p>
-            )}
+            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-textPrimary">
+              {displayedAccount.email}
+            </p>
           </div>
 
           <div className="space-y-1 p-5">

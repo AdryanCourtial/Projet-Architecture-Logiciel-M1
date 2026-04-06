@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
+import useAuth from "../auth/useAuth";
 
 const baseNavItems = [
   { to: "/", label: "Home" },
@@ -8,43 +9,28 @@ const baseNavItems = [
   { to: "/account", label: "Account" },
 ];
 
+const adminNavItems = [{ to: "/admin", label: "Admin" }];
+
 const authNavItems = [
   { to: "/login", label: "Login" },
   { to: "/register", label: "Register" },
 ];
 
-const MOCK_SESSION_KEY = "mockSession";
-
 function Navbar() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout, user } = useAuth();
 
-  const isLoggedIn = (() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    try {
-      const rawSession = localStorage.getItem(MOCK_SESSION_KEY);
-      if (!rawSession) {
-        return false;
-      }
-
-      const session = JSON.parse(rawSession) as { loggedIn?: boolean };
-      return session.loggedIn === true;
-    } catch {
-      return false;
-    }
-  })();
-
-  const navItems = isLoggedIn
-    ? baseNavItems
-    : [...baseNavItems, ...authNavItems];
+  const navItems = [
+    ...baseNavItems,
+    ...(isAuthenticated && user?.role === "ADMIN" ? adminNavItems : []),
+    ...(!isAuthenticated ? authNavItems : []),
+  ];
 
   const handleLogout = () => {
-    localStorage.removeItem(MOCK_SESSION_KEY);
+    logout();
     setIsOpen(false);
-    navigate("/");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -69,7 +55,7 @@ function Navbar() {
             </NavLink>
           ))}
 
-          {isLoggedIn && (
+          {isAuthenticated && (
             <button
               type="button"
               onClick={handleLogout}
@@ -107,7 +93,7 @@ function Navbar() {
             </NavLink>
           ))}
 
-          {isLoggedIn && (
+          {isAuthenticated && (
             <button
               type="button"
               onClick={handleLogout}

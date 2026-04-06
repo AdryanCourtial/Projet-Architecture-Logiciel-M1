@@ -9,7 +9,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       port: parseInt(process.env.DB_PORT || '3310'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || 'root',
+      password: process.env.DB_PASSWORD || '',
       database: process.env.DB_NAME || 'archi-logiciel',
       allowPublicKeyRetrieval: true,
     });
