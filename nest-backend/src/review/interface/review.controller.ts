@@ -10,16 +10,16 @@ import {
 } from '@nestjs/common';
 import { CreateReviewDto, ReviewQueryDto } from './requestDto/create-review.dto';
 import { ReviewResponseDto, ReviewPageResponseDto, AverageRatingResponseDto } from './responseDto/review.response.dto';
-import { Review } from '../domain/review.agregate';
 import { PaginationParams } from 'src/shared/application/type/PaginationParams';
 import { SessionAuthGuard } from 'src/auth/interfaces/guards/session.guard';
 import { CreateReviewUseCase } from '../application/use-cases/create-review.use-case';
 import { GetReviewsByProductUseCase } from '../application/use-cases/get-reviews-by-product.use-case';
 import { GetReviewsByUserUseCase } from '../application/use-cases/get-reviews-by-user.use-case';
 import { GetAverageRatingUseCase } from '../application/use-cases/get-average-rating.use-case';
+import { mapReviewToResponseDto } from './responseDto/utils';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('reviews')
-@UseGuards(SessionAuthGuard)
 export class ReviewController {
     constructor(
         private readonly createReviewUseCase: CreateReviewUseCase,
@@ -28,6 +28,9 @@ export class ReviewController {
         private readonly getAverageRatingUseCase: GetAverageRatingUseCase,
     ) {}
 
+    @ApiOperation({ summary: "Poster un commentaire sur un produit" })
+    @ApiResponse({ status: 200, description: "Poster un commentaire sur un produit", type: Promise<ReviewPageResponseDto> })
+    @UseGuards(SessionAuthGuard)
     @Post('/product/:productId')
     async createReview(@Param('productId') productId: string, @Body() dto: CreateReviewDto, @Req() req: any): Promise<ReviewResponseDto> {
         const userId = req.session.userId;
@@ -40,10 +43,12 @@ export class ReviewController {
             comment: dto.comment,
         });
 
-        return this.mapReviewToResponseDto(review);
+        return mapReviewToResponseDto(review);
 
     }
 
+    @ApiOperation({ summary: "Récupère les review d'un produit précis" })
+    @ApiResponse({ status: 200, description: "Récupère les review d'un produit précis", type: Promise<ReviewPageResponseDto> })
     @Get('product/:productId')
     async getReviewsByProduct(@Param('productId') productId: string, @Query() query: ReviewQueryDto): Promise<ReviewPageResponseDto> {
         const page = query.page || 1;
@@ -56,7 +61,7 @@ export class ReviewController {
         );
 
         return {
-            items: result.items.map(review => this.mapReviewToResponseDto(review)),
+            items: result.items.map(review =>  mapReviewToResponseDto(review)),
             page: result.page,
             limit: result.limit,
             total: result.totalItems,
@@ -64,6 +69,9 @@ export class ReviewController {
         };
     }
 
+    @ApiOperation({ summary: "Récupère les reviews d'un utilisiateur précis" })
+    @ApiResponse({ status: 200, description: "Récupère les reviews d'un utilisiateur précis", type: Promise<ReviewPageResponseDto> })
+    @UseGuards(SessionAuthGuard)
     @Get('user/:userId')
     async getReviewsByUser(@Param('userId') userId: string, @Query() query: ReviewQueryDto): Promise<ReviewPageResponseDto> {
         const page = query.page || 1;
@@ -76,7 +84,7 @@ export class ReviewController {
         );
 
         return {
-            items: result.items.map(review => this.mapReviewToResponseDto(review)),
+            items: result.items.map(review => mapReviewToResponseDto(review)),
             page: result.page,
             limit: result.limit,
             total: result.totalItems,
@@ -85,19 +93,10 @@ export class ReviewController {
  
     }
 
+    @ApiOperation({ summary: "Récupère ula moyenne de la note du produit" })
+    @ApiResponse({ status: 200, description: "Récupère un produit par son ID", type: Promise<AverageRatingResponseDto> })
     @Get('product/:productId/average')
     async getAverageRating(@Param('productId') productId: string): Promise<AverageRatingResponseDto> {
-        return await this.getAverageRatingUseCase.execute(parseInt(productId));
-}
-
-    private mapReviewToResponseDto(review: Review): ReviewResponseDto {
-        return {
-            id: review.getId()!,
-            userId: review.getUserId(),
-            productId: review.getProductId(),
-            rating: review.getRating().getValue(),
-            title: review.getComment().getTitle(),
-            comment: review.getComment().getContent(),
-        };
+            return await this.getAverageRatingUseCase.execute(parseInt(productId));
     }
 }

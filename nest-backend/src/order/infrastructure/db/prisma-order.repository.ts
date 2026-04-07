@@ -93,11 +93,10 @@ export class PrismaOrderRepository implements OrderRepositoryInterface {
           )
         }),
         item.quantity,
-        item.product.price // Prix au moment de l'achat
+        item.product.price
       )
     );
 
-    // Reconstituer les objets Address
     const deliveryAddress = Address.reconstitute(
       orderData.adressDevivery.id,
       orderData.adressDevivery.accountId,

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { RequestRegisterDto } from "./requestDto/register.dto";
 import { RegisterUseCase } from "../application/use-cases/register/register.use-case";
 import { ResponseRegisterDto } from "./responseDto/register.dto";
@@ -10,6 +10,8 @@ import { MeUseCase } from "../application/use-cases/me/me.use-case";
 import { SessionAuthGuard } from "./guards/session.guard";
 import { Account } from "src/compte/domain/account.entity";
 import { ResponseMeDto } from "./responseDto/me.dto";
+import { PatchUserUseCase } from "../application/use-cases/patchUser/patchUser.use-case";
+import { PatchUserDto } from "./requestDto/patchUser.dto";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -18,7 +20,8 @@ export class AuthController {
     constructor(
         private readonly registerUseCase: RegisterUseCase,
         private readonly loginUseCase: LoginUseCase,
-        private readonly meUseCase: MeUseCase
+        private readonly meUseCase: MeUseCase,
+        private readonly patchUserUseCase: PatchUserUseCase
     ) {}
 
     @ApiOperation({ summary: "login a user" })
@@ -31,7 +34,6 @@ export class AuthController {
             password: requestLoginDto.password,
         })
 
-        console.log('session =', req.session);
         req.session.userId = account.id;
         req.session.email = account.email.getValue();
 
@@ -76,6 +78,25 @@ export class AuthController {
             phone: account.getPhone() ? account.getPhone()!.getValue() : undefined
         };
 
+    }
+
+    @ApiOperation({ summary: "Patch user information" })
+    @ApiBody({ type: PatchUserDto })
+    @ApiResponse({ status: 200, description: "The user information has been successfully updated.", type: ResponseMeDto })
+    @UseGuards(SessionAuthGuard)
+    @Patch()
+    async patchUser(@Body() patchData: PatchUserDto, @Req() req: any): Promise<ResponseMeDto> {
+        const userId = req.session.userId;
+
+        const updatedAccount = await this.patchUserUseCase.execute(userId, patchData);
+
+        return {
+            email: updatedAccount.getEmail().getValue(),
+            name: updatedAccount.getName(),
+            firstName: updatedAccount.getFirstName(),
+            role: updatedAccount.getRole().getValue(),
+            phone: updatedAccount.getPhone() ? updatedAccount.getPhone()!.getValue() : undefined,
+        };
     }
 
 

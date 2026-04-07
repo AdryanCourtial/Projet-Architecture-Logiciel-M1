@@ -18,8 +18,9 @@ export class Phone {
 
 
     static validatePhone(phone: string): boolean {
-        const regex = /^[0-9+\-\s()]+$/;
-        return phone.length >= 10 && regex.test(phone);
+        const normalized = phone.trim().replace(/\s+/g, '');
+        const frenchRegex = /^(0[1-9]|(\+33)[1-9])[0-9]{8}$/;
+        return frenchRegex.test(normalized);
     }
 
     static normalizePhone(phone: string): string {

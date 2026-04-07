@@ -5,7 +5,8 @@ import {
   Body,
   Param,
   UseGuards,
-  Request
+  Request,
+  Req
 } from '@nestjs/common';
 import { CreateOrderUseCase } from 'src/order/application/use-cases/createOrder/createOrder.use-case';
 import { GetOrderUseCase } from 'src/order/application/use-cases/getOrder/getOrder.use-case';
@@ -14,6 +15,7 @@ import { CreateOrderRequestDto } from './dto/request/createOrder.request';
 import { OrderWithAddressesMapper } from './mapper/order-with-addresses.mapper';
 import { SessionAuthGuard } from 'src/auth/interfaces/guards/session.guard';
 import { PostOrderResponseDto } from './dto/response/postOrder.response';
+import { getOrderByUserUseCase } from '../application/use-cases/getOrderByUser/getOrderByUser.use-case';
 
 @Controller('orders')
 @UseGuards(SessionAuthGuard)
@@ -22,6 +24,7 @@ export class OrderController {
     private readonly createOrderUseCase: CreateOrderUseCase,
     private readonly getOrderUseCase: GetOrderUseCase,
     private readonly addressService: AddressService,
+    private readonly getOrderByUser: getOrderByUserUseCase
   ) {}
 
   @Post('create')
@@ -60,6 +63,17 @@ export class OrderController {
 
   }
 
+  @Get('/user')
+  async getOrderByUserId(@Req() req: any) {
+
+    const userId = req.session.userId
+
+    const orders  = this.getOrderByUser.execute(userId)
+
+    return orders
+
+  }
+
   @Get(':id')
   async getOrder(@Param('id') id: string) {
 
@@ -68,11 +82,8 @@ export class OrderController {
 
       const deliveryAddress = await this.addressService.getAddressById(order.getDeliveryAddress().getId()!);
       const billingAddress = await this.addressService.getAddressById(order.getBillingAddress().getId()!);
-
-      console.log('Fetched order:', order);
-      console.log('Fetched delivery address:', deliveryAddress);
-      console.log('Fetched billing address:', billingAddress);
-
       return OrderWithAddressesMapper.toDetailResponse(order, deliveryAddress, billingAddress);
+      
   }
+
 }

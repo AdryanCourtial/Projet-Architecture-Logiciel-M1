@@ -8,8 +8,11 @@ import { PrismaAuthRepository } from "./infrastracture/db/prisma-auth.repository
 import { BcryptRepository } from "./infrastracture/bcrypt/bcrypt.repository";
 import { HashPasswordServiceInterface } from "./application/repository/hash-password.repository";
 import { MeUseCase } from "./application/use-cases/me/me.use-case";
+import { PatchUserUseCase } from "./application/use-cases/patchUser/patchUser.use-case";
+import { PrismaModule } from "src/shared/infrastructure/database/prisma.module";
 
 @Module({
+    imports: [PrismaModule],
     controllers: [AuthController],
     providers: [
     RegisterUseCase,
@@ -25,6 +28,7 @@ import { MeUseCase } from "./application/use-cases/me/me.use-case";
     LoginUseCase,
     RegisterUseCase,
     MeUseCase,
+    PatchUserUseCase,
     HashPasswordService,
 
     ],
