@@ -1,5 +1,5 @@
-import { MOCK_CATEGORIES } from "../../products/product.types";
-import type { ProductCreatePayload } from "../../products/product.types";
+import { useEffect, useState } from "react";
+import type { Category, ProductCreatePayload } from "../../products/product.types";
 
 type FormData = ProductCreatePayload & { id?: number };
 
@@ -7,6 +7,7 @@ interface ProductFormProps {
   isOpen: boolean;
   isEditing: boolean;
   formData: FormData;
+  categories: Category[];
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => Promise<void>;
   onFormDataChange: (data: FormData) => void;
@@ -17,11 +18,70 @@ function ProductForm({
   isOpen,
   isEditing,
   formData,
+  categories,
   onClose,
   onSubmit,
   onFormDataChange,
   isSubmitting = false,
 }: ProductFormProps) {
+  const [priceInput, setPriceInput] = useState("");
+
+  const formatCentsToEuroInput = (valueInCents: number): string => {
+    if (!Number.isFinite(valueInCents) || valueInCents <= 0) {
+      return "";
+    }
+
+    const integerValue = Math.round(valueInCents);
+    const euros = Math.floor(integerValue / 100);
+    const cents = integerValue % 100;
+
+    if (cents === 0) {
+      return String(euros);
+    }
+
+    return `${euros},${String(cents).padStart(2, "0")}`;
+  };
+
+  const parseEuroInputToCents = (normalizedValue: string): number => {
+    if (!normalizedValue || normalizedValue === ".") {
+      return 0;
+    }
+
+    const [eurosPart = "0", centsPart = ""] = normalizedValue.split(".");
+    const euros = Number.parseInt(eurosPart || "0", 10);
+    const cents = Number.parseInt((centsPart + "00").slice(0, 2), 10);
+
+    if (Number.isNaN(euros) || Number.isNaN(cents)) {
+      return 0;
+    }
+
+    return euros * 100 + cents;
+  };
+
+  const normalizePriceInput = (rawValue: string): string => {
+    let sanitized = rawValue.replace(/[^\d.,]/g, "").replace(/,/g, ".");
+
+    const firstDotIndex = sanitized.indexOf(".");
+    if (firstDotIndex !== -1) {
+      const beforeDot = sanitized.slice(0, firstDotIndex + 1);
+      const afterDot = sanitized.slice(firstDotIndex + 1).replace(/\./g, "");
+      sanitized = `${beforeDot}${afterDot}`;
+    }
+
+    const [eurosPart = "", centsPart = ""] = sanitized.split(".");
+    const trimmedCentsPart = centsPart.slice(0, 2);
+
+    return trimmedCentsPart.length > 0
+      ? `${eurosPart}.${trimmedCentsPart}`
+      : sanitized.endsWith(".")
+        ? `${eurosPart}.`
+        : eurosPart;
+  };
+
+  useEffect(() => {
+    setPriceInput(formatCentsToEuroInput(formData.price));
+  }, [formData.price, isOpen]);
+
   if (!isOpen) return null;
 
   const handleChange = (field: keyof FormData, value: any) => {
@@ -79,16 +139,17 @@ function ProductForm({
               </label>
               <input
                 type="text"
-                inputMode="numeric"
-                value={formData.price === 0 ? "" : String(formData.price)}
+                inputMode="decimal"
+                value={priceInput}
                 onChange={(e) => {
-                  const onlyDigits = e.target.value.replace(/\D/g, "");
-                  handleChange("price", onlyDigits === "" ? 0 : Number(onlyDigits));
+                    const normalizedValue = normalizePriceInput(e.target.value);
+                    setPriceInput(normalizedValue.replace(".", ","));
+                    handleChange("price", parseEuroInputToCents(normalizedValue));
                 }}
                 required
                 disabled={isSubmitting}
                 className="mt-3 w-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 focus:border-acid focus:bg-white/5 focus:outline-none transition-all disabled:opacity-50"
-                placeholder="0"
+                placeholder="0,00"
               />
             </div>
 
@@ -124,7 +185,7 @@ function ProductForm({
               disabled={isSubmitting}
               className="mt-3 w-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white focus:border-acid focus:bg-white/5 focus:outline-none transition-all cursor-pointer disabled:opacity-50"
             >
-              {MOCK_CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <option key={cat.id} value={cat.id} className="bg-black">
                   {cat.name}
                 </option>

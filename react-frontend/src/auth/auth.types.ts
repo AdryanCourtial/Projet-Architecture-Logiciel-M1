@@ -1,6 +1,7 @@
 export type UserRole = "CLIENT" | "ADMIN";
 
 export type AuthUser = {
+  id?: number;
   email: string;
   name: string;
   firstName: string;
@@ -19,4 +20,11 @@ export type RegisterPayload = {
   confirmPassword: string;
   name: string;
   firstname: string;
+};
+
+export type UpdateUserPayload = {
+  email?: string;
+  firstname?: string;
+  name?: string;
+  phone?: string;
 };

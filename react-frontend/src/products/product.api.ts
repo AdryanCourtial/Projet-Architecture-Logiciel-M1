@@ -1,10 +1,16 @@
 import { axiosClient } from "../shared/api/axiosClient";
 import type {
+  Category,
   Product,
   ProductCreatePayload,
   ProductListResponse,
   ProductUpdatePayload,
 } from "./product.types";
+
+export const getProductCategories = async (): Promise<Category[]> => {
+  const response = await axiosClient.get<Category[]>("/products/categories");
+  return response.data;
+};
 
 export const getProducts = async (
   page: number = 1,

@@ -13,9 +13,12 @@ import type {
 import ProductForm from "./AdminProducts/ProductForm";
 import ProductTable from "./AdminProducts/ProductTable";
 import useAuth from "../auth/useAuth";
+import useProductCategories from "../products/useProductCategories";
 
 function AdminProducts() {
   const { user } = useAuth();
+  const { categories, isLoading: isLoadingCategories } = useProductCategories();
+  const defaultCategoryId = categories[0]?.id ?? 1;
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,8 +34,18 @@ function AdminProducts() {
     description: "",
     price: 0,
     stock: 0,
-    categoryId: 1,
+    categoryId: defaultCategoryId,
   });
+
+  useEffect(() => {
+    setFormData((current) => ({
+      ...current,
+      categoryId:
+        categories.some((category) => category.id === current.categoryId)
+          ? current.categoryId
+          : defaultCategoryId,
+    }));
+  }, [categories, defaultCategoryId]);
 
   // Load products
   const loadProducts = async () => {
@@ -61,7 +74,7 @@ function AdminProducts() {
         id: product.id,
         name: product.name,
         description: product.description,
-        price: product.price,
+        price: Math.round(product.price * 100),
         stock: product.stock,
         categoryId: product.category?.id || 1,
       });
@@ -72,7 +85,7 @@ function AdminProducts() {
         description: "",
         price: 0,
         stock: 0,
-        categoryId: 1,
+        categoryId: defaultCategoryId,
       });
     }
     setShowForm(true);
@@ -86,7 +99,7 @@ function AdminProducts() {
       description: "",
       price: 0,
       stock: 0,
-      categoryId: 1,
+      categoryId: defaultCategoryId,
     });
   };
 
@@ -182,7 +195,7 @@ function AdminProducts() {
       {/* Product Table */}
       <ProductTable
         products={products}
-        isLoading={isLoading}
+        isLoading={isLoading || isLoadingCategories}
         onEdit={handleOpenForm}
         onDelete={handleDelete}
         isDeleting={isDeleting}
@@ -193,6 +206,7 @@ function AdminProducts() {
         isOpen={showForm}
         isEditing={editingId !== null}
         formData={formData}
+        categories={categories}
         onClose={handleCloseForm}
         onSubmit={handleSubmit}
         onFormDataChange={setFormData}

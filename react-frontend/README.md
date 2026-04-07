@@ -1,73 +1,128 @@
-# React + TypeScript + Vite
+# Client Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web du projet, pensée pour deux profils:
+- client
+- admin
 
-Currently, two official plugins are available:
+Pour la documentation utilisateur du site, voir [DOC_UTILISATEUR.md](DOC_UTILISATEUR.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Présentation
 
-## React Compiler
+L’application permet de consulter le catalogue, gérer son panier, passer commande et suivre son compte. Les utilisateurs admin disposent en plus d’un accès à la gestion des produits.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prérequis
 
-## Expanding the ESLint configuration
+- Node.js 20 ou supérieur
+- npm
+- accès au backend NestJS
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd react-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Configuration
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Le frontend lit l’URL de l’API via la variable suivante:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_API_URL=http://localhost:3000
 ```
+
+Si le backend et le frontend tournent sur le même domaine, cette variable peut être omise.
+
+## Démarrage
+
+```bash
+npm run dev
+```
+
+Autres commandes utiles:
+
+```bash
+npm run build
+npm run lint
+npm run preview
+```
+
+## Parcours client
+
+### Accueil
+- Découvrir les catégories principales
+- Accéder rapidement aux produits
+
+### Boutique
+- Parcourir tous les produits
+- Filtrer par catégorie
+- Ouvrir la fiche d’un produit
+
+### Fiche produit
+- Voir le détail du produit
+- Lire les avis
+- Ajouter le produit au panier
+- Ajouter un avis si connecté
+
+### Panier
+- Modifier les quantités
+- Supprimer un article
+- Lancer le checkout
+- Valider la commande après saisie des informations de livraison et de facturation
+
+### Compte
+- Mettre à jour son profil
+- Consulter ses commandes
+
+### Authentification
+- Se connecter
+- Créer un compte
+- Se déconnecter via le menu
+
+## Parcours admin
+
+L’accès admin est réservé aux comptes avec le rôle `ADMIN`.
+
+### Gestion des produits
+- Créer un produit
+- Modifier un produit
+- Supprimer un produit
+- Renseigner prix, stock, image et catégorie
+
+### Accès
+- Le menu admin apparaît uniquement pour les comptes autorisés
+- Les routes protégées redirigent automatiquement si le rôle n’est pas valide
+
+## Routes principales
+
+- `/`: accueil
+- `/shop`: boutique
+- `/product/:id`: fiche produit
+- `/cart`: panier
+- `/account`: compte utilisateur
+- `/login`: connexion
+- `/register`: inscription
+- `/admin`: espace admin
+- `/admin/products`: gestion des produits
+
+## Fonctionnement technique
+
+- L’application utilise des cookies de session côté backend
+- Les requêtes API passent par `axios` avec `withCredentials`
+- Le logout appelle `GET /auth/logout`
+
+## Structure rapide
+
+- `src/pages`: pages de l’application
+- `src/components`: composants partagés
+- `src/auth`: authentification et protection des routes
+- `src/products`: catalogue et catégories
+- `src/basket`: panier
+- `src/orders`: commandes
+- `src/reviews`: avis
+
+## Remarques
+
+- Les pages protégées redirigent vers `/login` si l’utilisateur n’est pas connecté
+- Les comptes admin sont redirigés vers leur espace après connexion
+- Le frontend attend une API compatible avec les routes déjà utilisées par l’application

@@ -33,13 +33,13 @@ export class PrismaAddressRepository implements AddressRepositoryInterface {
     return this.mapToAddress(addressData);
   }
 
-  async findByUniqueId(street: string, country: string, postalCode: string, city: string): Promise<Address> {
+  async findByUniqueId(street: string, country: string, postalCode: string, city: string): Promise<Address | null> {
     const addressData = await this.prismaService.adress.findFirst({
       where: { street, country, postalCode, city },
     });
 
     if (!addressData) {
-      throw new Error('Address not found');
+      return null;
     }
 
     return this.mapToAddress(addressData);

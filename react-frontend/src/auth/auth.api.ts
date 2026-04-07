@@ -1,6 +1,11 @@
 import axios from "axios";
 import { axiosClient } from "../shared/api/axiosClient";
-import type { AuthUser, LoginPayload, RegisterPayload } from "./auth.types";
+import type {
+  AuthUser,
+  LoginPayload,
+  RegisterPayload,
+  UpdateUserPayload,
+} from "./auth.types";
 
 type MessageResponse = {
   message: string;
@@ -47,4 +52,15 @@ export const registerRequest = async (
 export const fetchCurrentUser = async (): Promise<AuthUser> => {
   const response = await axiosClient.get<AuthUser>("/auth/me");
   return response.data;
+};
+
+export const updateCurrentUser = async (
+  payload: UpdateUserPayload,
+): Promise<AuthUser> => {
+  const response = await axiosClient.patch<AuthUser>("/auth", payload);
+  return response.data;
+};
+
+export const logoutRequest = async (): Promise<void> => {
+  await axiosClient.get("/auth/logout");
 };

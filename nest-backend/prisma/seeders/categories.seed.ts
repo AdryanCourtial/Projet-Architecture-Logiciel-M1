@@ -9,52 +9,52 @@ async function seedCategories(prisma: PrismaClient) {
         {
           name: 'Decks',
           description:
-            'Planches de skateboard de haute qualité pour tous les niveaux',
+            'High-quality skateboard decks for all skill levels',
         },
         {
           name: 'Trucks',
           description:
-            'Essieux et trucks pour skateboards, durables et performants',
+            'Durable and high-performance skateboard trucks',
         },
         {
           name: 'Wheels',
           description:
-            'Roues de skateboard en uréthane de différentes duretés et tailles',
+            'Urethane skateboard wheels in various hardness levels and sizes',
         },
         {
           name: 'Bearings',
           description:
-            'Roulements de qualité pour une meilleure vitesse et performance',
+            'Premium bearings for better speed and smoother rides',
         },
         {
           name: 'Grip Tape',
           description:
-            'Adhésif antidérapant pour skateboards, designs variés',
+            'Non-slip grip tape for skateboards with various styles',
         },
         {
           name: 'Protective Gear',
           description:
-            'Casques, coudières et protections pour la sécurité',
+            'Helmets, pads, and protective gear for safer skating',
         },
         {
           name: 'Skate Shoes',
           description:
-            'Chaussures de skateboard confortables et durables',
+            'Comfortable and durable skateboarding shoes',
         },
         {
           name: 'Hardware & Tools',
           description:
-            'Vis, écrous, outils et pièces de rechange pour skateboards',
+            'Bolts, nuts, tools, and replacement parts for skateboards',
         },
         {
           name: 'Longboards',
           description:
-            'Longboards pour le cruising et le downhill',
+            'Longboards built for cruising and downhill riding',
         },
         {
           name: 'Complete Setups',
           description:
-            'Skateboards complets prêts à l\'emploi pour débutants et confirmés',
+            'Ready-to-ride complete skateboards for beginners and advanced riders',
         },
       ],
     });

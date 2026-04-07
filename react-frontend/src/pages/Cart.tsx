@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "../components/Button";
-import CheckoutConfirmationModal from "../components/CheckoutConfirmationModal";
+import CheckoutOrderModal from "../cart/CheckoutOrderModal";
 import { getApiErrorMessage } from "../auth/auth.api";
 import {
   getBasket,
@@ -9,24 +9,9 @@ import {
   updateBasketQuantity,
 } from "../basket/basket.api";
 import type { Basket } from "../basket/basket.types";
+import { createOrder } from "../orders/order.api";
+import type { CreateOrderPayload } from "../orders/order.types";
 import { getProductById } from "../products/product.api";
-
-type InvoiceLine = {
-  productId: number;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-  lineTotal: number;
-};
-
-type Invoice = {
-  id: string;
-  createdAt: string;
-  total: number;
-  lines: InvoiceLine[];
-};
-
-const INVOICES_STORAGE_KEY = "mockInvoices";
 
 function Cart() {
   const navigate = useNavigate();
@@ -38,6 +23,8 @@ function Cart() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState<number | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [orderErrorMessage, setOrderErrorMessage] = useState<string | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -112,6 +99,7 @@ function Cart() {
 
   const handleStartCheckout = () => {
     setCheckoutMessage(null);
+    setOrderErrorMessage(null);
     setIsConfirmOpen(true);
   };
 
@@ -119,50 +107,32 @@ function Cart() {
     setIsConfirmOpen(false);
   };
 
-  const handleConfirmCheckout = async () => {
+  const handleCreateOrder = async (payload: CreateOrderPayload) => {
     const currentLines = basket?.lines ?? [];
-    const invoiceLines: InvoiceLine[] = currentLines.map((line) => ({
-      productId: line.productId,
-      name: line.productName,
-      quantity: line.quantity,
-      unitPrice: line.pricePerUnit,
-      lineTotal: line.totalPrice,
-    }));
 
-    if (invoiceLines.length === 0) {
+    if (currentLines.length === 0) {
       setIsConfirmOpen(false);
       return;
     }
 
-    const nextInvoice: Invoice = {
-      id: `INV-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      total: basket?.totalPrice ?? 0,
-      lines: invoiceLines,
-    };
+    setOrderErrorMessage(null);
+    setIsCreatingOrder(true);
 
     try {
-      const rawInvoices = localStorage.getItem(INVOICES_STORAGE_KEY);
-      const parsed = rawInvoices ? (JSON.parse(rawInvoices) as Invoice[]) : [];
-      const nextInvoices = [nextInvoice, ...parsed];
-      localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify(nextInvoices));
-    } catch {
-      localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify([nextInvoice]));
-    }
+      const createdOrder = await createOrder(payload);
 
-    try {
       await Promise.all(currentLines.map((line) => removeFromBasket(line.productId)));
       const refreshedBasket = await getBasket();
       setBasket(refreshedBasket);
-    } catch (error) {
-      setErrorMessage(getApiErrorMessage(error));
-    }
 
-    setCheckoutMessage(
-      "Purchase confirmed. Your invoice is now available in Account.",
-    );
-    setIsConfirmOpen(false);
-    navigate("/account");
+      setCheckoutMessage(`Order #${createdOrder.id} created (${createdOrder.status}).`);
+      setIsConfirmOpen(false);
+      navigate("/account");
+    } catch (error) {
+      setOrderErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setIsCreatingOrder(false);
+    }
   };
 
   return (
@@ -291,14 +261,14 @@ function Cart() {
         </p>
       )}
 
-      <CheckoutConfirmationModal
+      <CheckoutOrderModal
         isOpen={isConfirmOpen}
         total={basket?.totalPrice ?? 0}
         itemCount={basket?.totalItems ?? 0}
+        isSubmitting={isCreatingOrder}
+        errorMessage={orderErrorMessage}
         onCancel={handleCancelCheckout}
-        onConfirm={() => {
-          void handleConfirmCheckout();
-        }}
+        onSubmit={handleCreateOrder}
       />
     </section>
   );

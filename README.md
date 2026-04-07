@@ -1,82 +1,18 @@
-# React-Alarm-Project
+# No Comply
 
-Projet full-stack avec NestJS (backend) et Expo (frontend mobile).
+Voici notre site e-commerce de skate nommé No Comply, réalisé dans le cadre de notre projet d’architecture logicielle.
 
-## 🚀 Installation & Démarrage
+## Documentation
 
-### Avec Docker Compose (Recommandé)
+- Backend: [nest-backend/README.md](nest-backend/README.md)
+- Frontend: [react-frontend/README.md](react-frontend/README.md)
+- Documentation utilisateur: [react-frontend/DOC_UTILISATEUR.md](react-frontend/DOC_UTILISATEUR.md)
 
-```bash
-# Démarrer tous les services (Expo, NestJS, PostgreSQL)
-docker compose up
+## Justification des conventions de nommage
 
-# Démarrer en arrière-plan
-docker compose up -d
+Nous gardons des conventions de nommage simples et stables pour améliorer la lisibilité, faciliter la revue de code et éviter les ambiguïtés:
 
-# Arrêter les services
-docker compose down
-
-# Reconstruire les images
-docker compose up --build
-```
-
-### Local (sans Docker)
-
-**Backend NestJS:**
-
-```bash
-cd backend-nest
-npm install
-npm run start:dev
-```
-
-**Frontend Expo:**
-
-```bash
-cd Frontend-Expo
-npm install
-npm start
-```
-
-## 📦 Commandes Prisma
-
-```bash
-# Créer/appliquer une nouvelle migration
-npx prisma migrate dev --name "description"
-
-# Voir l'état des migrations
-npx prisma migrate status
-
-# Réinitialiser la DB (dev only)
-npx prisma migrate reset
-
-# Ouvrir Prisma Studio
-npx prisma studio
-
-# Générer le client Prisma
-npx prisma generate
-```
-
-## 📝 Architecture
-
-- **Backend:** `backend-nest/` - NestJS API (port 3000)
-- **Frontend:** `Frontend-Expo/` - Expo React Native (port 19000)
-- **DB:** PostgreSQL (port 5432)
-
-## 🔧 Variables d'environnement
-
-Voir `.env` pour les configurations:
-
-- `DATABASE_URL` - Chaîne de connexion PostgreSQL
-- Autres variables spécifiques à l'application
-
-## Norme de nomanclature
-
-Alors les rêgles sont absulut et de peuvent pas être modifié : 
-
-__variable__ : snake_case
-__fonction__ : camelCase
-__class__ : UpperCase
-__Interface__: UpperCase
-
-TOUT est en français, baguette, *camanbert*
+- variables: `snake_case`
+- fonctions: `camelCase`
+- classes: `UpperCase`
+- interfaces: `UpperCase`

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { fetchCurrentUser, loginRequest, registerRequest } from "./auth.api";
+import { fetchCurrentUser, loginRequest, logoutRequest, registerRequest } from "./auth.api";
 import type { AuthUser, LoginPayload, RegisterPayload, UserRole } from "./auth.types";
 
 type AuthContextValue = {
@@ -9,7 +9,7 @@ type AuthContextValue = {
   isLoading: boolean;
   login: (payload: LoginPayload) => Promise<AuthUser>;
   register: (payload: RegisterPayload) => Promise<string>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshUser: () => Promise<AuthUser | null>;
 };
 
@@ -61,7 +61,13 @@ function AuthProvider({ children }: AuthProviderProps) {
     return response.message;
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await logoutRequest();
+    } catch {
+      // The backend route may still be rolling out; always clear local auth state.
+    }
+
     setUser(null);
   }, []);
 

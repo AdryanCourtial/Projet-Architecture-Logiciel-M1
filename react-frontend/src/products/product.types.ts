@@ -41,32 +41,3 @@ export type Review = {
   author: string;
   createdAt: string;
 };
-
-export const MOCK_CATEGORIES: Category[] = [
-  {
-    id: 1,
-    name: "Decks",
-    description:
-      "Planches de skateboard de haute qualité pour tous les niveaux",
-  },
-  {
-    id: 2,
-    name: "Wheels",
-    description: "Roues de skateboard de différentes tailles",
-  },
-  {
-    id: 3,
-    name: "Trucks",
-    description: "Essieux de skateboard robustes et durables",
-  },
-  {
-    id: 4,
-    name: "Bearings",
-    description: "Roulements pour roues de skateboard",
-  },
-  {
-    id: 5,
-    name: "Grip Tape",
-    description: "Ruban adhésif antidérapant pour planches",
-  },
-];

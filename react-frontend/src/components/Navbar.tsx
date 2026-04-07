@@ -27,8 +27,8 @@ function Navbar() {
     ...(!isAuthenticated ? authNavItems : []),
   ];
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setIsOpen(false);
     navigate("/login", { replace: true });
   };
@@ -58,7 +58,7 @@ function Navbar() {
           {isAuthenticated && (
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => void handleLogout()}
               className="text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-200 ease-out hover:text-acid"
             >
               Logout
@@ -96,7 +96,7 @@ function Navbar() {
           {isAuthenticated && (
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => void handleLogout()}
               className="block w-full text-left text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-200 ease-out text-textPrimary hover:text-acid"
             >
               Logout

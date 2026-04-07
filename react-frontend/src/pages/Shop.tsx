@@ -1,18 +1,46 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import ProductCard from "../components/ProductCard";
 import { getProducts } from "../products/product.api";
-import { MOCK_CATEGORIES, type Product } from "../products/product.types";
+import type { Product } from "../products/product.types";
 import { getApiErrorMessage } from "../auth/auth.api";
+import useProductCategories from "../products/useProductCategories";
 
 type ShopCategory = "All" | number;
 
 function Shop() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { categories } = useProductCategories();
+
+  const getCategoryFromSearchParams = (): ShopCategory => {
+    const categoryIdParam = searchParams.get("categoryId");
+
+    if (!categoryIdParam) {
+      return "All";
+    }
+
+    const parsedCategoryId = Number.parseInt(categoryIdParam, 10);
+    const isExistingCategory = categories.some(
+      (category) => category.id === parsedCategoryId,
+    );
+
+    return Number.isNaN(parsedCategoryId) || !isExistingCategory
+      ? "All"
+      : parsedCategoryId;
+  };
+
   const [selectedCategory, setSelectedCategory] = useState<ShopCategory>("All");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const categoryFromUrl = getCategoryFromSearchParams();
+    setSelectedCategory(categoryFromUrl);
+    setPage(1);
+  }, [searchParams, categories]);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -38,6 +66,13 @@ function Shop() {
   const handleCategoryChange = (category: ShopCategory) => {
     setSelectedCategory(category);
     setPage(1);
+
+    if (category === "All") {
+      setSearchParams({});
+      return;
+    }
+
+    setSearchParams({ categoryId: category.toString() });
   };
 
   return (
@@ -47,7 +82,7 @@ function Shop() {
       </h1>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        {(["All", ...MOCK_CATEGORIES] as const).map((category) => {
+        {(["All", ...categories] as const).map((category) => {
           const categoryValue: ShopCategory =
             category === "All" ? "All" : category.id;
           const categoryLabel = category === "All" ? "All" : category.name;

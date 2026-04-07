@@ -52,7 +52,11 @@ export class ReviewController {
     @Get('product/:productId')
     async getReviewsByProduct(@Param('productId') productId: string, @Query() query: ReviewQueryDto): Promise<ReviewPageResponseDto> {
         const page = query.page || 1;
-        const limit = query.limit || 10;
+        let limit = query.limit || 10;
+        
+        if (typeof limit === 'string') {
+            limit = parseInt(limit);
+        }
 
         const pagination: PaginationParams = { page, limit };
         const result = await this.getReviewsByProductUseCase.execute(
