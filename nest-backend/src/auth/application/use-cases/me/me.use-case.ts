@@ -10,7 +10,6 @@ export class MeUseCase {
 
     constructor(
         private authRepository: AuthRepositoryInterface,
-        private hashPasswordService: HashPasswordServiceInterface
     ) {
         
     }
@@ -18,7 +17,6 @@ export class MeUseCase {
     async execute(input: MeInput): Promise<Account> {
         // Récupere les données de l'input 
         return await this.authRepository.findByEmail(Email.create(input.email));
-
     }
 
 }
