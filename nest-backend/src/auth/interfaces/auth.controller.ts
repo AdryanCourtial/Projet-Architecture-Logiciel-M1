@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { RequestRegisterDto } from "./requestDto/register.dto";
 import { RegisterUseCase } from "../application/use-cases/register/register.use-case";
 import { ResponseRegisterDto } from "./responseDto/register.dto";
@@ -8,10 +8,10 @@ import { ResponseLoginDto } from "./responseDto/login.dto";
 import { LoginUseCase } from "../application/use-cases/login/login.use-case";
 import { MeUseCase } from "../application/use-cases/me/me.use-case";
 import { SessionAuthGuard } from "./guards/session.guard";
-import { Account } from "src/compte/domain/account.entity";
 import { ResponseMeDto } from "./responseDto/me.dto";
 import { PatchUserUseCase } from "../application/use-cases/patchUser/patchUser.use-case";
 import { PatchUserDto } from "./requestDto/patchUser.dto";
+import { Response } from "express";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -21,7 +21,7 @@ export class AuthController {
         private readonly registerUseCase: RegisterUseCase,
         private readonly loginUseCase: LoginUseCase,
         private readonly meUseCase: MeUseCase,
-        private readonly patchUserUseCase: PatchUserUseCase
+        private readonly patchUserUseCase: PatchUserUseCase,
     ) {}
 
     @ApiOperation({ summary: "login a user" })
@@ -79,6 +79,22 @@ export class AuthController {
         };
 
     }
+
+    @ApiOperation({ summary: "Logout User" })
+    @ApiBody({ type: RequestRegisterDto })
+    @ApiResponse({ status: 200, description: "The user information has been successfully Logout." })
+    @UseGuards(SessionAuthGuard)
+    @Get("logout")
+    async logout(@Req() req: any): Promise<{ message: string }> {
+        req.session.destroy((err) => {
+            if (err) console.log("Erreur logout", err);
+        });
+
+        return {
+            message: "Déconnecté avec succès"
+        };
+    }
+
 
     @ApiOperation({ summary: "Patch user information" })
     @ApiBody({ type: PatchUserDto })

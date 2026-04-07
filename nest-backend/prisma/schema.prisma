@@ -22,11 +22,11 @@ model Account {
   role  String @default("CLIENT")
 
   basket Basket?
+  phone Phone?
   order Order[]
 
   adress Adress[]
   
-  phone Phone[]
   reviews Review[]
 }
 
@@ -36,8 +36,8 @@ model Phone {
   code      String   @default("+33")
   number    String   @unique
 
-  accountId Int
-  account   Account  @relation(fields: [accountId], references: [id])
+  accountId Int? @unique()
+  account   Account?  @relation(fields: [accountId], references: [id])
 }
 
 model Product {

@@ -38,6 +38,9 @@ export class PrismaAuthRepository implements AuthRepositoryInterface {
         const account = await this.prismaClient.account.findUnique({
             where: {
                 email: email.getValue()
+            }, 
+            include: {
+                phone: true
             }
         });
 
@@ -51,6 +54,7 @@ export class PrismaAuthRepository implements AuthRepositoryInterface {
             name: account.name,
             firstName: account.firstname,
             password: Password.create(account.password),
+            phone: account.phone?.number,
             role: account.role as Roles,
         });
     }
@@ -58,7 +62,7 @@ export class PrismaAuthRepository implements AuthRepositoryInterface {
     async patchAuth(userId: number, patchData: InputPatchUser): Promise<Account> {
 
         const updateData: any = {};
-        if (patchData.email) updateData.email = Email.create(patchData.email);
+        if (patchData.email) updateData.email = Email.create(patchData.email).getValue();
         if (patchData.firstname) updateData.firstname = patchData.firstname.toLowerCase().trim();
         if (patchData.name) updateData.name = patchData.name.toLowerCase().trim();
 
@@ -89,7 +93,7 @@ export class PrismaAuthRepository implements AuthRepositoryInterface {
                 throw new DomainException("Le format du téléphone est incorrect");
             }
 
-            if (currentUser.phone && currentUser.phone.length > 0) {
+            if (currentUser.phone && currentUser.phone.number.length > 0) {
                 await this.prismaClient.phone.deleteMany({
                     where: { accountId: userId },
                 });

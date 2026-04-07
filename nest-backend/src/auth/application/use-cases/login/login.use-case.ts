@@ -35,9 +35,6 @@ export class LoginUseCase {
             throw new Error("Invalid credentials");
         }
 
-        // Généréun tockern d'authentification JWT
-
-        console.log("User authenticated:", account.getId()!);
         // Return de l'utilisateur authentifié
          return {
             id: account.getId()!,
