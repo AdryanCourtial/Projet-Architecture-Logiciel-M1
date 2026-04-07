@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { defaultRoleRoute } from "../auth/AuthProvider";
+import { getApiErrorMessage } from "../auth/auth.api";
+import useAuth from "../auth/useAuth";
 import Button from "../components/Button";
 
 type LoginFormData = {
@@ -7,24 +10,16 @@ type LoginFormData = {
   password: string;
 };
 
-type MockUser = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-const MOCK_USER_KEY = "mockUser";
-const MOCK_SESSION_KEY = "mockSession";
-
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const wasRegistered =
     location.state &&
@@ -36,36 +31,23 @@ function Login() {
     setFormData((current) => ({ ...current, [field]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
+    setIsSubmitting(true);
 
-    const rawUser = localStorage.getItem(MOCK_USER_KEY);
-    const storedUser = rawUser ? (JSON.parse(rawUser) as MockUser) : null;
+    try {
+      const user = await login({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      });
 
-    if (!storedUser) {
-      setErrorMessage("No account found. Please register first.");
-      return;
+      navigate(defaultRoleRoute(user.role), { replace: true });
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const email = formData.email.trim().toLowerCase();
-    const password = formData.password;
-
-    if (email !== storedUser.email || password !== storedUser.password) {
-      setErrorMessage("Invalid email or password.");
-      return;
-    }
-
-    localStorage.setItem(
-      MOCK_SESSION_KEY,
-      JSON.stringify({
-        loggedIn: true,
-        email: storedUser.email,
-        firstName: storedUser.firstName,
-      }),
-    );
-
-    navigate("/account");
   };
 
   return (
@@ -121,7 +103,9 @@ function Login() {
           >
             Create an account
           </Link>
-          <Button type="submit">Sign In</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Signing In..." : "Sign In"}
+          </Button>
         </div>
       </form>
     </section>

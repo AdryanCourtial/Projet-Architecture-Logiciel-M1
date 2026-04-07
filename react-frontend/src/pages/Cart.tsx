@@ -1,13 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "../components/Button";
-import { products } from "../data/products";
 import CheckoutConfirmationModal from "../components/CheckoutConfirmationModal";
-
-type CartItem = {
-  productId: number;
-  quantity: number;
-};
+import { getApiErrorMessage } from "../auth/auth.api";
+import {
+  getBasket,
+  removeFromBasket,
+  updateBasketQuantity,
+} from "../basket/basket.api";
+import type { Basket } from "../basket/basket.types";
+import { getProductById } from "../products/product.api";
 
 type InvoiceLine = {
   productId: number;
@@ -26,59 +28,86 @@ type Invoice = {
 
 const INVOICES_STORAGE_KEY = "mockInvoices";
 
-const initialCart: CartItem[] = [
-  { productId: 1, quantity: 1 },
-  { productId: 4, quantity: 2 },
-];
-
 function Cart() {
   const navigate = useNavigate();
-  const [items, setItems] = useState<CartItem[]>(initialCart);
+  const [basket, setBasket] = useState<Basket | null>(null);
+  const [stockByProductId, setStockByProductId] = useState<
+    Record<number, number>
+  >({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState<number | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
 
-  const detailedItems = useMemo(
-    () =>
-      items
-        .map((item) => {
-          const product = products.find(
-            (candidate) => candidate.id === item.productId,
-          );
+  useEffect(() => {
+    const loadBasket = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMessage(null);
+        const data = await getBasket();
+        setBasket(data);
+      } catch (error) {
+        setErrorMessage(getApiErrorMessage(error));
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-          if (!product) {
-            return undefined;
-          }
+    void loadBasket();
+  }, []);
 
-          return {
-            ...item,
-            product,
-            lineTotal: item.quantity * product.price,
-          };
-        })
-        .filter(Boolean),
-    [items],
-  );
+  useEffect(() => {
+    const loadStocks = async () => {
+      const productIds = basket?.lines.map((line) => line.productId) ?? [];
 
-  const total = useMemo(
-    () => detailedItems.reduce((sum, item) => sum + (item?.lineTotal ?? 0), 0),
-    [detailedItems],
-  );
+      if (productIds.length === 0) {
+        setStockByProductId({});
+        return;
+      }
 
-  const updateQuantity = (productId: number, nextQuantity: number) => {
-    if (nextQuantity < 1) {
-      setItems((current) =>
-        current.filter((item) => item.productId !== productId),
-      );
-      return;
+      try {
+        const products = await Promise.all(
+          productIds.map(async (productId) => {
+            const product = await getProductById(productId);
+            return [productId, product.stock] as const;
+          }),
+        );
+
+        setStockByProductId(Object.fromEntries(products));
+      } catch (error) {
+        setErrorMessage(getApiErrorMessage(error));
+      }
+    };
+
+    void loadStocks();
+  }, [basket?.lines]);
+
+  const handleUpdateQuantity = async (productId: number, nextQuantity: number) => {
+    const maxStock = stockByProductId[productId];
+    const clampedQuantity =
+      typeof maxStock === "number" ? Math.min(nextQuantity, maxStock) : nextQuantity;
+
+    try {
+      setIsUpdating(productId);
+      setErrorMessage(null);
+
+      if (clampedQuantity <= 0) {
+        const nextBasket = await removeFromBasket(productId);
+        setBasket(nextBasket);
+        return;
+      }
+
+      const nextBasket = await updateBasketQuantity({
+        productId,
+        quantity: clampedQuantity,
+      });
+      setBasket(nextBasket);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setIsUpdating(null);
     }
-
-    setItems((current) =>
-      current.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: nextQuantity }
-          : item,
-      ),
-    );
   };
 
   const handleStartCheckout = () => {
@@ -90,16 +119,15 @@ function Cart() {
     setIsConfirmOpen(false);
   };
 
-  const handleConfirmCheckout = () => {
-    const invoiceLines: InvoiceLine[] = detailedItems
-      .filter((item): item is NonNullable<typeof item> => Boolean(item))
-      .map((item) => ({
-        productId: item.productId,
-        name: item.product.name,
-        quantity: item.quantity,
-        unitPrice: item.product.price,
-        lineTotal: item.lineTotal,
-      }));
+  const handleConfirmCheckout = async () => {
+    const currentLines = basket?.lines ?? [];
+    const invoiceLines: InvoiceLine[] = currentLines.map((line) => ({
+      productId: line.productId,
+      name: line.productName,
+      quantity: line.quantity,
+      unitPrice: line.pricePerUnit,
+      lineTotal: line.totalPrice,
+    }));
 
     if (invoiceLines.length === 0) {
       setIsConfirmOpen(false);
@@ -109,7 +137,7 @@ function Cart() {
     const nextInvoice: Invoice = {
       id: `INV-${Date.now()}`,
       createdAt: new Date().toISOString(),
-      total,
+      total: basket?.totalPrice ?? 0,
       lines: invoiceLines,
     };
 
@@ -122,7 +150,14 @@ function Cart() {
       localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify([nextInvoice]));
     }
 
-    setItems([]);
+    try {
+      await Promise.all(currentLines.map((line) => removeFromBasket(line.productId)));
+      const refreshedBasket = await getBasket();
+      setBasket(refreshedBasket);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    }
+
     setCheckoutMessage(
       "Purchase confirmed. Your invoice is now available in Account.",
     );
@@ -136,18 +171,26 @@ function Cart() {
         Cart
       </h1>
 
+      {errorMessage && (
+        <p className="mt-4 border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.12em] text-red-300">
+          {errorMessage}
+        </p>
+      )}
+
       <div className="mt-8 space-y-4">
-        {detailedItems.length === 0 && (
+        {isLoading && (
+          <p className="border border-white/10 px-4 py-6 text-sm uppercase tracking-widest text-white/60">
+            Loading basket...
+          </p>
+        )}
+
+        {!isLoading && (basket?.isEmpty ?? true) && (
           <p className="border border-white/10 px-4 py-6 text-sm uppercase tracking-widest text-white/60">
             Your cart is empty.
           </p>
         )}
 
-        {detailedItems.map((item) => {
-          if (!item) {
-            return null;
-          }
-
+        {(basket?.lines ?? []).map((item) => {
           return (
             <article
               key={item.productId}
@@ -155,18 +198,24 @@ function Cart() {
             >
               <div>
                 <h2 className="text-sm font-black uppercase tracking-[0.08em]">
-                  {item.product.name}
+                  {item.productName}
                 </h2>
                 <p className="mt-1 text-xs text-white/60">
-                  {item.product.price.toFixed(2)} € / unit
+                  {item.pricePerUnit.toFixed(2)} € / unit
                 </p>
+                {typeof stockByProductId[item.productId] === "number" && (
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/40">
+                    Stock available: {stockByProductId[item.productId]}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() =>
-                    updateQuantity(item.productId, item.quantity - 1)
+                    void handleUpdateQuantity(item.productId, item.quantity - 1)
                   }
+                  disabled={isUpdating === item.productId}
                   className="h-8 w-8 border border-white/30 text-sm font-black transition-all duration-200 ease-out hover:border-acid hover:text-acid"
                 >
                   -
@@ -174,27 +223,49 @@ function Cart() {
                 <input
                   type="number"
                   min={1}
+                  max={stockByProductId[item.productId]}
                   value={item.quantity}
                   onChange={(event) =>
-                    updateQuantity(
+                    void handleUpdateQuantity(
                       item.productId,
-                      Number(event.target.value) || 1,
+                      Math.max(0, Number.parseInt(event.target.value, 10) || 0),
                     )
                   }
+                  disabled={isUpdating === item.productId}
                   className="w-16 border border-white/30 bg-transparent px-2 py-1 text-center text-sm font-bold text-textPrimary"
                 />
                 <button
                   onClick={() =>
-                    updateQuantity(item.productId, item.quantity + 1)
+                    void handleUpdateQuantity(item.productId, item.quantity + 1)
+                  }
+                  disabled={
+                    isUpdating === item.productId ||
+                    (typeof stockByProductId[item.productId] === "number" &&
+                      item.quantity >= stockByProductId[item.productId])
                   }
                   className="h-8 w-8 border border-white/30 text-sm font-black transition-all duration-200 ease-out hover:border-acid hover:text-acid"
                 >
                   +
                 </button>
+                <button
+                  type="button"
+                  onClick={() => void handleUpdateQuantity(item.productId, 0)}
+                  disabled={isUpdating === item.productId}
+                  className="flex h-8 w-8 items-center justify-center border border-red-500/30 transition-all duration-200 ease-out hover:border-red-400 hover:bg-red-500/10 disabled:opacity-50"
+                  aria-label={`Remove ${item.productName} from cart`}
+                  title="Remove from cart"
+                >
+                  <img
+                    src="/delete-2-svgrepo-com.svg"
+                    alt=""
+                    aria-hidden="true"
+                    className="h-4 w-4 invert"
+                  />
+                </button>
               </div>
 
               <p className="text-sm font-black">
-                {item.lineTotal.toFixed(2)} €
+                {item.totalPrice.toFixed(2)} €
               </p>
             </article>
           );
@@ -203,11 +274,11 @@ function Cart() {
 
       <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center">
         <p className="text-xl font-black uppercase">
-          Total: {total.toFixed(2)} €
+          Total: {(basket?.totalPrice ?? 0).toFixed(2)} €
         </p>
         <Button
           type="button"
-          disabled={detailedItems.length === 0}
+          disabled={isLoading || (basket?.isEmpty ?? true)}
           onClick={handleStartCheckout}
         >
           Checkout
@@ -222,10 +293,12 @@ function Cart() {
 
       <CheckoutConfirmationModal
         isOpen={isConfirmOpen}
-        total={total}
-        itemCount={detailedItems.length}
+        total={basket?.totalPrice ?? 0}
+        itemCount={basket?.totalItems ?? 0}
         onCancel={handleCancelCheckout}
-        onConfirm={handleConfirmCheckout}
+        onConfirm={() => {
+          void handleConfirmCheckout();
+        }}
       />
     </section>
   );

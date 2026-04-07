@@ -1,69 +1,73 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { getApiErrorMessage } from "../auth/auth.api";
+import useAuth from "../auth/useAuth";
 import Button from "../components/Button";
 
 type RegisterFormData = {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
-
-type MockUser = RegisterFormData;
-
-const MOCK_USER_KEY = "mockUser";
-const MOCK_ACCOUNT_KEY = "mockAccountProfile";
 
 function Register() {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [formData, setFormData] = useState<RegisterFormData>({
-    firstName: "",
-    lastName: "",
+    firstname: "",
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const updateField = (field: keyof RegisterFormData, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
 
     if (
-      !formData.firstName.trim() ||
-      !formData.lastName.trim() ||
+      !formData.firstname.trim() ||
+      !formData.name.trim() ||
       !formData.email.trim() ||
-      !formData.password.trim()
+      !formData.password.trim() ||
+      !formData.confirmPassword.trim()
     ) {
       setErrorMessage("Please complete all fields.");
       return;
     }
 
-    const userToSave: MockUser = {
-      firstName: formData.firstName.trim(),
-      lastName: formData.lastName.trim(),
-      email: formData.email.trim().toLowerCase(),
-      password: formData.password,
-    };
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
 
-    localStorage.setItem(MOCK_USER_KEY, JSON.stringify(userToSave));
-    localStorage.setItem(
-      MOCK_ACCOUNT_KEY,
-      JSON.stringify({
-        firstName: userToSave.firstName,
-        lastName: userToSave.lastName,
-        email: userToSave.email,
-        address: "",
-        phone: "",
-      }),
-    );
+    setIsSubmitting(true);
 
-    navigate("/login", {
-      state: { registered: true },
-    });
+    try {
+      const responseMessage = await register({
+        firstname: formData.firstname.trim(),
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
+
+      navigate("/login", {
+        state: { registered: true, message: responseMessage },
+      });
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,24 +83,24 @@ function Register() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/70">
-              First Name
+              Firstname
             </span>
             <input
               type="text"
-              value={formData.firstName}
-              onChange={(event) => updateField("firstName", event.target.value)}
+              value={formData.firstname}
+              onChange={(event) => updateField("firstname", event.target.value)}
               className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
             />
           </label>
 
           <label className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/70">
-              Last Name
+              Name
             </span>
             <input
               type="text"
-              value={formData.lastName}
-              onChange={(event) => updateField("lastName", event.target.value)}
+              value={formData.name}
+              onChange={(event) => updateField("name", event.target.value)}
               className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
             />
           </label>
@@ -126,6 +130,18 @@ function Register() {
           />
         </label>
 
+        <label className="block space-y-1">
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/70">
+            Confirm password
+          </span>
+          <input
+            type="password"
+            value={formData.confirmPassword}
+            onChange={(event) => updateField("confirmPassword", event.target.value)}
+            className="w-full border border-white/20 bg-transparent px-3 py-2 text-sm font-bold text-textPrimary outline-none transition-colors focus:border-acid"
+          />
+        </label>
+
         {errorMessage && (
           <p className="border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-red-300">
             {errorMessage}
@@ -139,7 +155,9 @@ function Register() {
           >
             Already have an account?
           </Link>
-          <Button type="submit">Create Account</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Account"}
+          </Button>
         </div>
       </form>
     </section>

@@ -8,25 +8,14 @@ import Cart from "./pages/Cart";
 import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Admin from "./pages/Admin";
+import AdminProducts from "./pages/AdminProducts";
+import RequireAuth from "./auth/RequireAuth";
+import useAuth from "./auth/useAuth";
+import { defaultRoleRoute } from "./auth/AuthProvider";
 
 function App() {
-  const isLoggedIn = (() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    try {
-      const rawSession = localStorage.getItem("mockSession");
-      if (!rawSession) {
-        return false;
-      }
-
-      const session = JSON.parse(rawSession) as { loggedIn?: boolean };
-      return session.loggedIn === true;
-    } catch {
-      return false;
-    }
-  })();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <div className="min-h-screen bg-bgPrimary text-textPrimary">
@@ -37,25 +26,59 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/cart"
+            element={
+              <RequireAuth>
+                <Cart />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/account"
             element={
-              isLoggedIn ? <Account /> : <Navigate to="/login" replace />
+              <RequireAuth>
+                <Account />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth allowedRoles={["ADMIN"]}>
+                <Admin />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <RequireAuth allowedRoles={["ADMIN"]}>
+                <AdminProducts />
+              </RequireAuth>
             }
           />
           <Route
             path="/login"
             element={
-              isLoggedIn ? <Navigate to="/account" replace /> : <Login />
+              isAuthenticated && user ? (
+                <Navigate to={defaultRoleRoute(user.role)} replace />
+              ) : (
+                <Login />
+              )
             }
           />
           <Route
             path="/register"
             element={
-              isLoggedIn ? <Navigate to="/account" replace /> : <Register />
+              isAuthenticated && user ? (
+                <Navigate to={defaultRoleRoute(user.role)} replace />
+              ) : (
+                <Register />
+              )
             }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
