@@ -12,6 +12,7 @@ import { PrismaAddressRepository } from './infrastructure/db/prisma-address.repo
 import { AddressService } from './application/services/address.service';
 import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
 import { BasketModule } from 'src/basket/basket.module';
+import { GetCategoriesUseCase } from 'src/product/application/use-cases/getCategories/getCategories.use-case';
 
 @Module({
   imports: [PrismaModule, BasketModule],
@@ -29,7 +30,7 @@ import { BasketModule } from 'src/basket/basket.module';
     CreateAddressUseCase,
     GetAddressesUseCase,
     DeleteAddressUseCase,
-    AddressService,
+    AddressService
   ],
   controllers: [OrderController],
   exports: [OrderRepositoryInterface, AddressRepositoryInterface],

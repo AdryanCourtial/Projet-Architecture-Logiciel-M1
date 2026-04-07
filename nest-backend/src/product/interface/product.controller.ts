@@ -14,9 +14,9 @@ import { GetAllProductsPaginatedResponse } from "./dto/response/getAllProducts.r
 import { CreateProductDto, UpdateProductDto } from "./dto/request/createProduct.dto";
 import { Product } from "../domain/product.agregate";
 import { GetFilterQuery } from "./dto/request/getFilterQuery";
-import { Role } from "src/compte/domain/value-object/role.value-object";
+import { GetCategoriesUseCase } from "../application/use-cases/getCategories/getCategories.use-case";
+import { ResponseGetCategories } from "./dto/response/getCategories";
 @Controller("products")
-@UseGuards(SessionAuthGuard)
 export class ProductController {
 
     constructor(
@@ -24,7 +24,8 @@ export class ProductController {
         private readonly postProductUseCase: AddProductUseCase,
         private readonly updateProductUseCase: UpdateProductUseCase,
         private readonly deleteProductUseCase: DeleteProductUseCase,
-        private readonly getAllProductsUseCase: GetAllProductsUseCase
+        private readonly getAllProductsUseCase: GetAllProductsUseCase,
+        private readonly getCategoriesUseCase: GetCategoriesUseCase
     ) { }
 
     @ApiOperation({ summary: "Récupère tous les produits avec pagination et filtrage par catégorie" })
@@ -62,6 +63,19 @@ export class ProductController {
         };
     }
 
+    @ApiOperation({ summary: "Récupères les categories de produits" })
+    @ApiResponse({ status: 200, description: "Catégories récupérées avec succès" })
+    @Get('/categories')
+    async getCategories(): Promise<ResponseGetCategories[]> {
+        const categories = await this.getCategoriesUseCase.execute();
+
+        return categories.map(category => ({
+            id: category.getId(),
+            name: category.getName(),
+            description: category.getDescription()
+        }));
+    }
+    
     @ApiOperation({ summary: "Récupère un produit par son ID" })
     @ApiResponse({ status: 200, description: "Récupère un produit par son ID", type: Promise<ResponseGetProduct> })
     @Get(':id')
@@ -93,7 +107,7 @@ export class ProductController {
     @ApiBody({ type: CreateProductDto })
     @ApiResponse({ status: 201, description: "Produit créé avec succès", type: Promise<CreateProductResponse> })
     @Roles("ADMIN")
-    @UseGuards(RolesGuard)
+    @UseGuards(RolesGuard, SessionAuthGuard)
     @Post()
     async addProduct(@Body() body: CreateProductDto): Promise<CreateProductResponse> {
         try {
@@ -117,10 +131,13 @@ export class ProductController {
         }
     }
 
+    
+
+    
     @ApiOperation({ summary: "Mettre à jour un produit (ADMIN uniquement)" })
     @ApiBody({ type: UpdateProductDto })
     @ApiResponse({ status: 200, description: "Produit mis à jour avec succès", type: Promise<Product> })
-    @UseGuards(RolesGuard)
+    @UseGuards(RolesGuard, SessionAuthGuard)
     @Roles('ADMIN')
     @Patch(':id')
     async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto): Promise<CreateProductResponse> {
@@ -150,7 +167,7 @@ export class ProductController {
 
     @ApiOperation({ summary: "Supprimer un produit (ADMIN uniquement)" })
     @ApiResponse({ status: 204, description: "Produit supprimé avec succès" })
-    @UseGuards(RolesGuard)
+    @UseGuards(RolesGuard, SessionAuthGuard)
     @Roles('ADMIN')
     @Delete(':id')
     async deleteProduct(@Param('id') id: string): Promise<void> {
@@ -163,4 +180,5 @@ export class ProductController {
         await this.deleteProductUseCase.execute({ id: productId });
         
     }
+
 }

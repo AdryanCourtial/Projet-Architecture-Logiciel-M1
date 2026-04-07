@@ -8,6 +8,7 @@ import { GetAllProductsUseCase } from './application/use-cases/getAllProducts/ge
 import { ProductRepositoryInterface } from './application/repository/product.repository';
 import { PrismaProductRepository } from './infrastructure/db/prisma-product.repository';
 import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
+import { GetCategoriesUseCase } from './application/use-cases/getCategories/getCategories.use-case';
 
 @Module({
     imports: [PrismaModule],
@@ -21,6 +22,7 @@ import { PrismaModule } from 'src/shared/infrastructure/database/prisma.module';
         UpdateProductUseCase,
         DeleteProductUseCase,
         GetAllProductsUseCase,
+        GetCategoriesUseCase
     ],
     controllers: [ProductController],
     exports: [ProductRepositoryInterface],

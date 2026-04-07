@@ -173,4 +173,16 @@ export class PrismaProductRepository implements ProductRepositoryInterface {
             totalPages: Math.ceil(total / pagination.limit)
         };
     }
+
+    async findAllCategories(): Promise<Category[]> {
+        return this.prismaService.category.findMany().then(categories => 
+            categories.map(category => 
+                Category.create(
+                    category.id,
+                    category.name,
+                    category.description
+                )
+            )
+        );
+    }
 }
