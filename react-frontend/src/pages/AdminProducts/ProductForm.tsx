@@ -78,16 +78,17 @@ function ProductForm({
                 Price (€) *
               </label>
               <input
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) =>
-                  handleChange("price", parseFloat(e.target.value) || 0)
-                }
+                type="text"
+                inputMode="numeric"
+                value={formData.price === 0 ? "" : String(formData.price)}
+                onChange={(e) => {
+                  const onlyDigits = e.target.value.replace(/\D/g, "");
+                  handleChange("price", onlyDigits === "" ? 0 : Number(onlyDigits));
+                }}
                 required
                 disabled={isSubmitting}
                 className="mt-3 w-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 focus:border-acid focus:bg-white/5 focus:outline-none transition-all disabled:opacity-50"
-                placeholder="0.00"
+                placeholder="0"
               />
             </div>
 

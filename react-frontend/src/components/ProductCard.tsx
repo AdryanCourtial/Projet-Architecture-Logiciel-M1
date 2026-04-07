@@ -1,12 +1,14 @@
 import { Link } from "react-router";
 import Button from "./Button";
 import type { Product } from "../products/product.types";
+import useBasketActions from "../basket/useBasketActions";
 
 type ProductCardProps = {
   product: Product;
 };
 
 function ProductCard({ product }: ProductCardProps) {
+  const { addProduct, isAdding, errorMessage } = useBasketActions();
   const imageUrl = product.image || "https://via.placeholder.com/300x300?text=No+Image";
   const categoryName = product.category?.name || "Uncategorized";
   const isInStock = product.stock > 0;
@@ -42,11 +44,23 @@ function ProductCard({ product }: ProductCardProps) {
           </p>
           <Button
             variant={isInStock ? "primary" : "secondary"}
-            disabled={!isInStock}
+            disabled={!isInStock || isAdding}
+            onClick={() => {
+              void addProduct(product.id, 1);
+            }}
           >
-            {isInStock ? "ADD TO CART" : `SOLD OUT (${product.stock})`}
+            {!isInStock
+              ? `SOLD OUT (${product.stock})`
+              : isAdding
+                ? "ADDING..."
+                : "ADD TO CART"}
           </Button>
         </div>
+        {errorMessage && (
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-red-300">
+            {errorMessage}
+          </p>
+        )}
       </div>
     </article>
   );

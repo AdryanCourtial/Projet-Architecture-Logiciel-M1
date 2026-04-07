@@ -152,7 +152,7 @@ function AdminProducts() {
   }
 
   return (
-    <section className="mx-auto w-full max-w-[1400px] px-4 py-12 sm:px-6 lg:px-8">
+    <section className="mx-auto w-full max-w-350 px-4 py-12 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-black uppercase tracking-[0.08em]">

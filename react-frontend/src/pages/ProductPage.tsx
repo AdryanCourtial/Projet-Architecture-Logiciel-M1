@@ -3,8 +3,10 @@ import { Link, useParams } from "react-router";
 import Button from "../components/Button";
 import { getProductById } from "../products/product.api";
 import type { Product } from "../products/product.types";
+import useBasketActions from "../basket/useBasketActions";
 
 function ProductPage() {
+  const { addProduct, isAdding, errorMessage: basketErrorMessage } = useBasketActions();
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,9 +100,20 @@ function ProductPage() {
           </div>
 
           <div className="mt-8">
-            <Button className="w-full sm:w-auto" disabled={!isInStock}>
-              {isInStock ? "ADD TO CART" : "SOLD OUT"}
+            <Button
+              className="w-full sm:w-auto"
+              disabled={!isInStock || isAdding}
+              onClick={() => {
+                void addProduct(product.id, 1);
+              }}
+            >
+              {!isInStock ? "SOLD OUT" : isAdding ? "ADDING..." : "ADD TO CART"}
             </Button>
+            {basketErrorMessage && (
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-red-300">
+                {basketErrorMessage}
+              </p>
+            )}
           </div>
 
           <div className="mt-10 border-t border-white/10 pt-6">
